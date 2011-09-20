@@ -30,7 +30,6 @@
  *	
  *	@category		cmModules
  *	@package		STE.Plugin
- *	@implements		CMM_STE_Plugin_Interface
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
  *	@copyright		2011 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
