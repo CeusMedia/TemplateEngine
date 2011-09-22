@@ -44,26 +44,29 @@ class CMM_STE_Plugin_Include extends CMM_STE_Plugin_Abstract implements CMM_STE_
 	protected $keyword			= 'include';
 	
 	/**	@var		string		$type			Plugin type (pre|post) */
-	protected $type				= 'post';
+	protected $type				= 'pre';
 	
 	/**
 	 *	Apply plugin to template content.
 	 *	@access		public
 	 *	@param		string		$template		Template content
-	 *	@param		array		$elements		Elements assigned to template
+	 *	@param		array		$elements		Reference to elements assigned to template
 	 *	@return		string
 	 */
-	public function work( $template, $elements ){
+	public function work( $template, &$elements ){
 		$matches	= array();
-		$pattern	= '/<(\?)?%'.$this->keyword.'\((.+)\)%>/U';
+		$pattern	= '/<(\?)?%'.$this->keyword.'\((.+)\)(|.+)?%>/U';
 		preg_match_all( $pattern, $template, $matches );
 		if( !$matches[0] )
 			return $template;
 
 		for( $i=0; $i<count( $matches[0] ); $i++ ){
-			$filePath	= CMM_STE_Template::getTemplatePath().$matches[2][$i];
-			$nested		= CMM_STE_Template::render( $filePath, $elements );
-			$template	= str_replace( $matches[0][$i], $nested, $template );
+			$hash		= 'STE'.uniqid();															//  insert a hash value as replacement
+			$filePath	= $matches[2][$i];
+			$content	= CMM_STE_Template::render( $filePath, $elements );
+			$elements[$hash]	= $content;
+			$value		= '<%?'.$hash.$matches[3][$i].'%>';
+			$template	= str_replace( $matches[0][$i], $value, $template );
 		}
 		return $template;
 	}

@@ -39,39 +39,16 @@
  *	@link			http://code.google.com/p/cmclasses/
  *	@since			03.03.2007
  *	@version		$Id: Template.php5 837 2011-03-08 15:50:28Z christian.wuerker $
- * 
- *	<b>Syntax of a template file</b>
- *	- comment <%--comment--%>				 | will be removed on render
- *	- optional tag <%?tagname%>              | will be replaced, even with empty string
- *	- non optional tag <%tagname%>           | will be replaced but must be defined and have content
- *	- optional content <%?--optional--%>     | content will be shown or removed depending on ::$removeOptional
- *  - load(file.html)                        | load another template relatively to this one an insert here
- *
- *	<b>Example</b>
- *	<code>
- *	<html>
- *		<head>
- *			<title><%?pagetitle%></title>
- *			<%load(meta.html)%>
- *		</head>
- *		<body>
- *			<%-- this is a comment --%>
- *			<h1><%title%></h1>
- *			<p><%text%></p>
- *			<%-- just an other comment --%>
- *			<%?-- this content is optional and will be show if $removeOptional is not set to true --%>
- *		</body>
- *	</html>
- *	</code>
  */
 class CMM_STE_Template{
+
 	/**	@var		string		$className		Name of template class */
 	protected $className;
-	/**	@var		array		the first dimension holds all added labels, the second dimension holds elements for each label */
+	/**	@var		array		$elements		the first dimension holds all added labels, the second dimension holds elements for each label */
 	protected $elements;
-	/**	@var		string		content of a specified templatefile */
+	/**	@var		string		$fileName		Filename of a specified template file */
 	protected $fileName;
-	/**	@var		string		content of a specified templatefile */
+	/**	@var		string		$template		Content of a specified template file */
 	protected $template;
 	
 	protected static $pathTemplates	= NULL;
@@ -79,18 +56,14 @@ class CMM_STE_Template{
 	protected $loaded			= array();
 
 
-	/**	@var		array		$plugins		List of Template Plugin Instances */
+	/**	@var		array		$plugins		List of template plugin instances */
 	public static $plugins		= array();
 
-	/**	@var		array		$plugins		List of Template Plugin Instances */
+	/**	@var		array		$plugins		List of template filter instances */
 	public static $filters		= array();
 
 	public static function getTemplatePath(){
 		return self::$pathTemplates;
-	}
-
-	public static function setTemplatePath( $path ){
-		self::$pathTemplates	= preg_replace( "@(.+)/$@", "\\1", $path )."/";;
 	}
 	
 	/**
@@ -206,19 +179,22 @@ class CMM_STE_Template{
 		$this->add( array( $tag => $element ), $overwrite );
 	}
 
-	public static function addFilter( CMM_STE_Filter_Interface $filter ){
-		foreach( $filter->getKeywords() as $keyword ){
-			if( array_key_exists( $keyword, self::$filters ) )
-				throw new Exception( 'Filter keyword "'.$keyword.'" is already taken by another filter' );
-			self::$filters[$keyword]	= $filter;
-		}
-	}
-
-	public static function registerFilter( $keywords, $className ){
+	/**
+	 *	Registers a filter instance, which can be applied to all template tags.
+	 *	If no keywords are given the filter's default keywords are registered.
+	 *	You can use 'registerFilter' to avoid building an instance.
+	 *	@access		public
+	 *	@param		CMM_STE_Filter_Interface	$filter		Instance of filter
+	 *	@param		array						$keywords	List of keywords to bind filter on
+	 *	@return
+	 */
+	public static function addFilter( CMM_STE_Filter_Interface $filter, $keywords = array() ){
+		if( !$keywords )
+			$keywords	= $filter->getKeywords();
 		foreach( $keywords as $keyword ){
 			if( array_key_exists( $keyword, self::$filters ) )
 				throw new Exception( 'Filter keyword "'.$keyword.'" is already taken by another filter' );
-			self::$filters[$keyword]	= $className;
+			self::$filters[$keyword]	= $filter;
 		}
 	}
 
@@ -247,6 +223,9 @@ class CMM_STE_Template{
 		$this->addElement( $tag, new self( $fileName, $element ), $overwrite );
 	}
 
+	/**
+	 *	@todo		code doc
+	 */
 	protected function applyFilters( $matches ){
 		$filters	= array();
 		foreach( explode( '|', $matches[3] ) as $filter ){
@@ -256,7 +235,7 @@ class CMM_STE_Template{
 				$arguments	= isset( $parts[1] ) ? explode( ',', $parts[1] ) : array();
 				if( array_key_exists( $filter, self::$filters ) ){
 					if(	is_string( self::$filters[$filter] ) )
-						self::$filters[$filter]	= new self::$filters[$filter];
+						self::$filters[$filter]	= Alg_Object_Factory::createObject( self::$filters[$filter] );
 					$this->tmp	= self::$filters[$filter]->apply( $this->tmp, $arguments );
 				}
 			}
@@ -264,6 +243,13 @@ class CMM_STE_Template{
 		return $this->tmp;	
 	}
 
+	/**
+	 *	Applies registered plugins directly to current template content.
+	 *	@access		protected
+	 *	@param		string		$content		Reference to current template content
+	 *	@param		string		$type			Type of plugins to apply: pre | post
+	 *	@return		string
+	 */
 	protected function applyPlugins( &$content, $type = 'pre' ){
 		ksort( self::$plugins );
 		foreach( self::$plugins as $priority => $plugins )											//  iterate plugins priorities
@@ -301,7 +287,7 @@ class CMM_STE_Template{
 			$out		= preg_replace_callback( $pattern, $callbackFilter, $out );					//  realize placeholder, apply filters on content
  		}
 		$out = preg_replace( '/<%\?.*%>/U', '', $out );    											//  remove left over optional placeholders
-        $out = preg_replace( '/\n\s+\n/', "\n", $out );												//  remove double line breaks
+		$out = preg_replace( '/\n\s+\n/', "\n", $out );												//  remove double line breaks
 
 		$this->applyPlugins( $out, 'post' );														//  apply post processing plugins
 
@@ -395,28 +381,20 @@ class CMM_STE_Template{
 	}
 
 	/**
-	 *	Loads a new template file if it exists. Otherwise it will throw an Exception.
-	 *	@param		string		$fileName 	File Name of Template
-	 *	@return		boolean
+	 *	Registers a filter, which can be applied to all template tags, by its class name.
+	 *	@access		public
+	 *	@param		CMM_STE_Filter_Interface	$filter		Instance of filter
+	 *	@param		array						$keywords	List of keywords to bind filter on
+	 *	@return
 	 */
-	public function setTemplate( $fileName ){
-		if( empty( $fileName ) )
-			return FALSE;
-			
-		$filePath	= self::$pathTemplates.$fileName;
-		if( !in_array( $filePath, $this->loaded ) )
-			$this->loaded[$filePath] = 1;
-		else
-			$this->loaded[$filePath]++;
-		if( $this->loaded[$filePath] > 100 )
-			throw new Exception( 'Template "'.$filePath.'" loaded too often' );
-
-		if( !file_exists( $filePath ) )
-			throw new Exception_Template( Exception_Template::FILE_NOT_FOUND, $filePath );
-
-		$this->fileName	= $fileName;
-		$this->template = file_get_contents( $filePath );
-		return TRUE;
+	public static function registerFilter( $className, $keywords ){
+		if( !$keywords )
+			throw new InvalidArgumentException( 'No filter keywords give' );
+		foreach( $keywords as $keyword ){
+			if( array_key_exists( $keyword, self::$filters ) )
+				throw new Exception( 'Filter keyword "'.$keyword.'" is already taken by another filter' );
+			self::$filters[$keyword]	= $className;
+		}
 	}
 	
 	/**
@@ -445,6 +423,41 @@ class CMM_STE_Template{
 		$template->template	= $string;
 		$template->add( $elements );
 		return $template->create();
+	}
+
+	/**
+	 *	Loads a new template file if it exists. Otherwise it will throw an Exception.
+	 *	@param		string		$fileName 	File Name of Template
+	 *	@return		boolean
+	 */
+	public function setTemplate( $fileName ){
+		if( empty( $fileName ) )
+			return FALSE;
+			
+		$filePath	= self::$pathTemplates.$fileName;
+		if( !in_array( $filePath, $this->loaded ) )
+			$this->loaded[$filePath] = 1;
+		else
+			$this->loaded[$filePath]++;
+		if( $this->loaded[$filePath] > 100 )
+			throw new Exception( 'Template "'.$filePath.'" loaded too often' );
+
+		if( !file_exists( $filePath ) )
+			throw new Exception_Template( Exception_Template::FILE_NOT_FOUND, $filePath );
+
+		$this->fileName	= $fileName;
+		$this->template = file_get_contents( $filePath );
+		return TRUE;
+	}
+
+	/**
+	 *	Sets path to templates.
+	 *	@access		public
+	 *	@param		string		$path		Path to templates
+	 *	@return		void
+	 */
+	public static function setTemplatePath( $path ){
+		self::$pathTemplates	= preg_replace( "@(.+)/$@", "\\1", $path )."/";;
 	}
 }
 ?>
