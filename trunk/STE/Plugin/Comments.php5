@@ -52,10 +52,10 @@ class CMM_STE_Plugin_Comments extends CMM_STE_Plugin_Abstract implements CMM_STE
 	 *	Apply plugin to template content.
 	 *	@access		public
 	 *	@param		string		$template		Template content
-	 *	@param		array		$elements		Elements assigned to template
+	 *	@param		array		$elements		Reference to elements assigned to template
 	 *	@return		string
 	 */
-	public function work( $template, $elements ){
+	public function work( $template, &$elements ){
  		$template	= preg_replace( '/<%--.*--%>/sU', '', $template );								//  remove template engine style comments
  		if( $this->options['remove'] )																//  HTML comments should be removed
 			$template	= preg_replace( '/<!--.+-->/sU', '', $template );							//  find and remove all HTML comments 

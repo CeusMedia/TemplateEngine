@@ -95,10 +95,10 @@ class CMM_STE_Plugin_Tidy extends CMM_STE_Plugin_Abstract {
 	 *	Apply plugin to template content.
 	 *	@access		public
 	 *	@param		string		$template		Template content
-	 *	@param		array		$elements		Elements assigned to template
+	 *	@param		array		$elements		Reference to elements assigned to template
 	 *	@return		string
 	 */
-	public function work( $template, $elements ){
+	public function work( $template, &$elements ){
 		if( !extension_loaded( 'tidy' ) )
 			throw new RuntimeException( 'tidy extension not loaded' );
     	$tidy = new tidy;

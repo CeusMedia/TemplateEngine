@@ -52,10 +52,10 @@ interface CMM_STE_Plugin_Interface{
 	 *	Apply plugin to template content.
 	 *	@access		public
 	 *	@param		string		$template		Template content
-	 *	@param		array		$elements		Elements assigned to template
+	 *	@param		array		$elements		Reference to elements assigned to template
 	 *	@return		string
 	 */
-	public function work( $template, $elements );
+	public function work( $template, &$elements );
 
 	/**
 	 *	Returns the keyword of this plugin instance.
