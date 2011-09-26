@@ -228,6 +228,8 @@ class CMM_STE_Template{
 	 */
 	protected function applyFilters( $matches ){
 		$filters	= array();
+		if( empty( $matches[3] ) )
+			return $this->tmp;
 		foreach( explode( '|', $matches[3] ) as $filter ){
 			if( trim( $filter ) ){
 				$parts		= explode( ':', trim( $filter ) );
@@ -274,8 +276,7 @@ class CMM_STE_Template{
 		
 			$tmp = '';																				//  
 //			foreach( $labelElements as $element ){													//  iterate over all elements with current element container
-	 			if( is_object( $element ) )															//  element is an object
-	 			{
+	 			if( is_object( $element ) ){														//  element is an object
 	 				if( !( $element instanceof $this->className ) )									//  object is not an template of this template engine
 						continue;																	//  skip this one
 					$element = $element->create();													//  render template before concat
@@ -283,7 +284,7 @@ class CMM_STE_Template{
 				$tmp	.= $element;
 //			}
 			$this->tmp	= $tmp;																		//  store current temporary element content for filters
-			$pattern	= '/<%(\?)?('.$label.')(|.+)?%>/';											//  create regular expression for element label with filter support
+			$pattern	= '/<%(\?)?('.$label.')(\|.+)?%>/';											//  create regular expression for element label with filter support
 			$out		= preg_replace_callback( $pattern, $callbackFilter, $out );					//  realize placeholder, apply filters on content
  		}
 		$out = preg_replace( '/<%\?.*%>/U', '', $out );    											//  remove left over optional placeholders
