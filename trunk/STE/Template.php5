@@ -416,14 +416,16 @@ class CMM_STE_Template{
 	 *	@static
 	 *	@param		string		$string			Template String
 	 *	@param		array		$elements		Map of Elements for Template String
+	 *	@param		string		$fileName		File name of the template. Needed in case of error of missing labels
 	 *	@return		string
 	 */
-	public static function renderString( $string, $elements = array() ){
-		$template	= new self();
-		$template->template	= $string;
-		$template->add( $elements );
-		return $template->create();
-	}
+	public static function renderString( $string, $elements = array(), $fileName = NULL ){
+                $template        = new self();
+                $template->template        = $string;
+                $template->fileName        = $fileName;
+                $template->add( $elements );
+                return $template->create();
+        }
 
 	/**
 	 *	Loads a new template file if it exists. Otherwise it will throw an Exception.
