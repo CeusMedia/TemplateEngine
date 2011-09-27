@@ -88,7 +88,7 @@ class CMM_STE_Plugin_File extends CMM_STE_Plugin_Abstract{
 		for( $i=0; $i<count( $matches[0] ); $i++ ){
 			try{
 				$hash		= 'STE'.uniqid();														//  insert a hash value as replacement
-				$content	= File_Reader::load( $this->options['path'].$matches[2][$i] );			//  load file content
+				$content	= File_Reader::load( $this->options['path'].$this->getFileNameFromKey( $matches[2][$i] ) );			//  load file content
 				$content	= preg_replace( '/<%(.+)%>/U', '&lt;%$1%&gt;', $content );				//  
 				$elements[$hash]	=& $content;													//  store file content in elements by its hash value as new template tag
 				$value		= '<%?'.$hash.$matches[3][$i].'%>';														
@@ -104,6 +104,18 @@ class CMM_STE_Plugin_File extends CMM_STE_Plugin_Abstract{
 			$template	= str_replace( $matches[0][$i], $value, $template );
 		}
 		return $template;
+	}
+	
+	/**
+	 *	Returnes the file name by its key,
+	 *	This method is meant to be overriden for different behaviour.
+	 *	@access		protected
+	 *	@param		string		$key			Key of external file to load
+	 *	@return		string
+	 */
+	protected function getFileNameFromKey( $key )
+	{
+		return $key;
 	}
 }
 ?>
