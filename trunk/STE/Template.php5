@@ -51,11 +51,12 @@ class CMM_STE_Template{
 	/**	@var		string		$template		Content of a specified template file */
 	protected $template;
 	/**	@var		CMM_SEA_Adapter_Interface	$storage		Storage instance to be used for caching */
-	protected $cache;
+	protected static $cache;
+	protected static $cachePrefix;
 	
 	protected static $pathTemplates	= NULL;
-
-	protected $loaded			= array();
+	/**	@var		array		$loaded			List of loaded templates, used to avoid to load templates to often */
+	protected static $loaded		= array();
 
 
 	/**	@var		array		$plugins		List of template plugin instances */
@@ -439,11 +440,13 @@ class CMM_STE_Template{
 	 *	@access		public
 	 *	@static
 	 *	@param		CMM_SEA_Adapter_Interface	$storage		Storage instance to be used for caching
+	 *	@param		string						$prefix			Prefix for keys in cache.
 	 *	@return		void
 	 */
-	public function setCache( CMM_SEA_Adapter_Interface $storage )
+	public static function setCache( CMM_SEA_Adapter_Interface $storage, $prefix = '' )
 	{
-		$this->cache	= $storage;
+		self::$cache		= $storage;
+		self::$cachePrefix	= $prefix;
 	}
 
 	/**
@@ -452,27 +455,28 @@ class CMM_STE_Template{
 	 *	@return		boolean
 	 */
 	public function setTemplate( $fileName ){
-		if( empty( $fileName ) )
-			return FALSE;
+		if( empty( $fileName ) )																	//  no file name given
+			return FALSE;																			//  return with negative result
 			
-		$filePath	= self::$pathTemplates.$fileName;
-		if( !in_array( $filePath, $this->loaded ) )
-			$this->loaded[$filePath] = 1;
+		$filePath	= self::$pathTemplates.$fileName;												//  get file within set file path
+		if( !in_array( $filePath, self::$loaded ) )													//  file not found in load list
+			self::$loaded[$filePath] = 1;															//  append file to load list
 		else
-			$this->loaded[$filePath]++;
-		if( $this->loaded[$filePath] > 100 )
-			throw new Exception( 'Template "'.$filePath.'" loaded too often' );
+			self::$loaded[$filePath]++;																//  count file load
+		if( self::$loaded[$filePath] > 100 )														//  file loaded 100 times
+			throw new Exception( 'Template "'.$filePath.'" loaded too often' );						//  break because limit is reached
 
-		$cached	= $this->cache ? $this->cache->get( $filePath ) : NULL;
-		if( !( $cached || file_exists( $filePath ) ) )
-			throw new Exception_Template( Exception_Template::FILE_NOT_FOUND, $filePath );
-
-		$this->fileName	= $fileName;
-		if( $cached )			
-			$this->template = $content;
-		else
-			$this->template = file_get_contents( $filePath );
-		return TRUE;
+		$this->fileName	= $fileName;																//  set template file name, needed for exception handling
+		$content	= self::$cache ? self::$cache->get( self::$cachePrefix.$filePath ) : NULL;		//  try to get file content from cache
+		if( !$content ){																			//  no cached content
+			if( !file_exists( $filePath ) )															//  file is not existing
+				throw new Exception_Template( Exception_Template::FILE_NOT_FOUND, $filePath );		//  break with exception
+			$content	= File_Reader::load( $filePath );											//  load file content
+			if( self::$cache )																		//  cache is enabled
+				self::$cache->set( self::$cachePrefix.$filePath, $content );						//  store file content in cache
+		}
+		$this->template = $content;																	//  set template content
+		return TRUE;																				//  return with positive result
 	}
 
 	/**
