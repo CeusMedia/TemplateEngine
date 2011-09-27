@@ -50,6 +50,8 @@ class CMM_STE_Template{
 	protected $fileName;
 	/**	@var		string		$template		Content of a specified template file */
 	protected $template;
+	/**	@var		CMM_SEA_Adapter_Interface	$storage		Storage instance to be used for caching */
+	protected $cache;
 	
 	protected static $pathTemplates	= NULL;
 
@@ -384,13 +386,17 @@ class CMM_STE_Template{
 	/**
 	 *	Registers a filter, which can be applied to all template tags, by its class name.
 	 *	@access		public
-	 *	@param		CMM_STE_Filter_Interface	$filter		Instance of filter
-	 *	@param		array						$keywords	List of keywords to bind filter on
+	 *	@param		string		$filter		Name of filter class, implementing CMM_STE_Filter_Interface
+	 *	@param		array		$keywords	List of keywords to bind filter to
 	 *	@return
 	 */
 	public static function registerFilter( $className, $keywords ){
+		if( is_string( $keywords ) )
+			$keywords	= array( $keywords );
+		if( !is_array( $keywords ) )
+			throw new InvalidArgumentException( 'Filter keywords must be an array of keywords or a string with a single keyword' );
 		if( !$keywords )
-			throw new InvalidArgumentException( 'No filter keywords give' );
+			throw new InvalidArgumentException( 'No filter keywords given' );
 		foreach( $keywords as $keyword ){
 			if( array_key_exists( $keyword, self::$filters ) )
 				throw new Exception( 'Filter keyword "'.$keyword.'" is already taken by another filter' );
@@ -421,12 +427,24 @@ class CMM_STE_Template{
 	 *	@return		string
 	 */
 	public static function renderString( $string, $elements = array(), $fileName = NULL ){
-                $template        = new self();
-                $template->template        = $string;
-                $template->fileName        = $fileName;
-                $template->add( $elements );
-                return $template->create();
-        }
+		$template				= new self();
+		$template->template		= $string;
+		$template->fileName		= $fileName;
+		$template->add( $elements );
+		return $template->create();
+	}
+
+	/**
+	 *	Sets storage for caching.
+	 *	@access		public
+	 *	@static
+	 *	@param		CMM_SEA_Adapter_Interface	$storage		Storage instance to be used for caching
+	 *	@return		void
+	 */
+	public function setCache( CMM_SEA_Adapter_Interface $storage )
+	{
+		$this->cache	= $storage;
+	}
 
 	/**
 	 *	Loads a new template file if it exists. Otherwise it will throw an Exception.
@@ -445,11 +463,15 @@ class CMM_STE_Template{
 		if( $this->loaded[$filePath] > 100 )
 			throw new Exception( 'Template "'.$filePath.'" loaded too often' );
 
-		if( !file_exists( $filePath ) )
+		$cached	= $this->cache ? $this->cache->get( $filePath ) : NULL;
+		if( !( $cached || file_exists( $filePath ) ) )
 			throw new Exception_Template( Exception_Template::FILE_NOT_FOUND, $filePath );
 
 		$this->fileName	= $fileName;
-		$this->template = file_get_contents( $filePath );
+		if( $cached )			
+			$this->template = $content;
+		else
+			$this->template = file_get_contents( $filePath );
 		return TRUE;
 	}
 
