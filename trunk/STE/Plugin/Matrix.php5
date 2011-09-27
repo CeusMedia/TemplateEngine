@@ -66,7 +66,9 @@ class CMM_STE_Plugin_Matrix extends CMM_STE_Plugin_Abstract{
 			$this->keyword	= $options['keyword'];
 			unset( $options['keyword'] );
 		}
-		if( !isset( $options['data'] ) )
+		if( isset( $options['data'] ) && is_array( $options['data'] ) )
+			$this->options['data']	=& $options['data'];
+		if( empty( $this->options['data'] ) )
 			throw new Exception( 'No matrix data provided' );
 		parent::__construct( $options );
 	}

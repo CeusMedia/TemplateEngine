@@ -37,7 +37,7 @@
  *	@link			http://code.google.com/p/cmmodules/
  *	@since			15.09.2011
  *	@version		$Id$
- */
+ */ 
 class CMM_STE_Plugin_File extends CMM_STE_Plugin_Abstract{
 
 	/**	@var		string		$keyword		Plugin keyword */
@@ -64,7 +64,11 @@ class CMM_STE_Plugin_File extends CMM_STE_Plugin_Abstract{
 			$this->keyword	= $options['keyword'];
 			unset( $options['keyword'] );
 		}
-		if( !isset( $options['path'] ) )
+		if( isset( $options['path'] ) ){
+			$this->options['path']	= $options['path'];
+			unset( $options['path'] );
+		}
+		if( !isset( $this->options['path'] ) )
 			throw new InvalidArgumentException( 'No path set' );
 		parent::__construct( $options );
 	}
@@ -87,21 +91,21 @@ class CMM_STE_Plugin_File extends CMM_STE_Plugin_Abstract{
 		$value	= NULL;
 		for( $i=0; $i<count( $matches[0] ); $i++ ){
 			try{
-				$hash		= 'STE'.uniqid();														//  insert a hash value as replacement
-				$content	= File_Reader::load( $this->options['path'].$this->getFileNameFromKey( $matches[2][$i] ) );			//  load file content
-				$content	= preg_replace( '/<%(.+)%>/U', '&lt;%$1%&gt;', $content );				//  
-				$elements[$hash]	= $content;													//  store file content in elements by its hash value as new template tag
-				$value		= '<%?'.$hash.$matches[3][$i].'%>';														
+				$hash		= 'STE'.uniqid();														//  create unique hash value
+				$content	= File_Reader::load( $this->getFileNameFromKey( $matches[2][$i] ) );	//  load file content
+				$content	= preg_replace( '/<%(.+)%>/U', '&lt;%$1%&gt;', $content );				//  escape tags in content
+				$elements[$hash]	= $content;														//  store file content in elements by its hash value as new template tag
+				$value		= '<%?'.$hash.$matches[3][$i].'%>';										//  replacement for tag is a hash tag				
 			}
-			catch( Exception $e ){
-				if( $this->options['mode'] == 'strict' )
-					throw new Exception_IO( 'Invalid file', 0, $matches[2][$i], $e );
-				else if( $this->options['mode'] == 'verbose' )
-					$value	= 'Missing file: '.$matches[2][$i];
+			catch( Exception $e ){																	//  catch all exceptions
+				if( $this->options['mode'] == 'strict' )											//  strict error mode
+					throw new Exception_IO( 'Invalid file', 0, $matches[2][$i], $e );				//  throw an exception
+				else if( $this->options['mode'] == 'verbose' )										//  verbose error mode
+					$value	= 'Missing file: '.$matches[2][$i];										//  
 				else
 					$value	= '';
 			}
-			$template	= str_replace( $matches[0][$i], $value, $template );
+			$template	= str_replace( $matches[0][$i], $value, $template );						//  replace tag by hash value, content will be inserted later in template engine itself
 		}
 		return $template;
 	}
@@ -115,7 +119,7 @@ class CMM_STE_Plugin_File extends CMM_STE_Plugin_Abstract{
 	 */
 	protected function getFileNameFromKey( $key )
 	{
-		return $key;
+		return $this->options['path'].$key;
 	}
 }
 ?>
