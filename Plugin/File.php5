@@ -90,7 +90,7 @@ class CMM_STE_Plugin_File extends CMM_STE_Plugin_Abstract{
 				$hash		= 'STE'.uniqid();														//  insert a hash value as replacement
 				$content	= File_Reader::load( $this->options['path'].$this->getFileNameFromKey( $matches[2][$i] ) );			//  load file content
 				$content	= preg_replace( '/<%(.+)%>/U', '&lt;%$1%&gt;', $content );				//  
-				$elements[$hash]	=& $content;													//  store file content in elements by its hash value as new template tag
+				$elements[$hash]	= $content;													//  store file content in elements by its hash value as new template tag
 				$value		= '<%?'.$hash.$matches[3][$i].'%>';														
 			}
 			catch( Exception $e ){
