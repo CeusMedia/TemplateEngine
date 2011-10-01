@@ -84,7 +84,7 @@ class CMM_STE_Plugin_File extends CMM_STE_Plugin_Abstract{
 		if( empty( $this->options['path'] ) )
 			throw new RuntimeException( 'No path set' );
 		$matches	= array();
-		$pattern	= '/<(\?)?%'.$this->keyword.'\((.+)\)(|.+)?%>/U';
+		$pattern	= '/<(\?)?%'.$this->keyword.'\((.+)\)(\|.+)?%>/U';
 		preg_match_all( $pattern, $template, $matches );
 		if( !$matches[0] )
 			return $template;

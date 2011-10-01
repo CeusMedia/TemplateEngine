@@ -55,7 +55,7 @@ class CMM_STE_Plugin_Include extends CMM_STE_Plugin_Abstract implements CMM_STE_
 	 */
 	public function work( $template, &$elements ){
 		$matches	= array();
-		$pattern	= '/<(\?)?%'.$this->keyword.'\((.+)\)(|.+)?%>/U';
+		$pattern	= '/<(\?)?%'.$this->keyword.'\((.+)\)(\|.+)?%>/U';
 		preg_match_all( $pattern, $template, $matches );
 		if( !$matches[0] )
 			return $template;
