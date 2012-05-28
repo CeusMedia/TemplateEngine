@@ -486,7 +486,7 @@ class CMM_STE_Template{
 	 *	@return		void
 	 */
 	public static function setTemplatePath( $path ){
-		self::$pathTemplates	= preg_replace( "@(.+)/$@", "\\1", $path )."/";;
+		self::$pathTemplates	= preg_replace( "@(.+)/$@", "\\1/", $path );
 	}
 }
 ?>
