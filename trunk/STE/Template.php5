@@ -17,28 +17,28 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@category		cmClasses
- *	@package		UI
+ *	@category		cmModules
+ *	@package		STE
  *	@author			David Seebacher <dseebacher@gmail.com>
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
  *	@copyright		2007-2011 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmclasses/
+ *	@link			http://code.google.com/p/cmmodules/
  *	@since			03.03.2007
- *	@version		$Id: Template.php5 837 2011-03-08 15:50:28Z christian.wuerker $
+ *	@version		$Id$
  */
 /**
  *	Template Class.
- *	@category		cmClasses
- *	@package		UI
+ *	@category		cmModules
+ *	@package		STE
  *	@uses			Exception_Template
  *	@author			David Seebacher <dseebacher@gmail.com>
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
  *	@copyright		2007-2011 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmclasses/
+ *	@link			http://code.google.com/p/cmmodules/
  *	@since			03.03.2007
- *	@version		$Id: Template.php5 837 2011-03-08 15:50:28Z christian.wuerker $
+ *	@version		$Id$
  */
 class CMM_STE_Template{
 
