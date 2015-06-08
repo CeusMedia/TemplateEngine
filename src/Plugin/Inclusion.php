@@ -34,14 +34,14 @@ namespace CeusMedia\TemplateEngine\Plugin;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-class Include extends \CeusMedia\TemplateEngine\PluginAbstract{
-	
+class Inclusion extends \CeusMedia\TemplateEngine\PluginAbstract{
+
 	/**	@var		string		$keyword		Plugin keyword */
 	protected $keyword			= 'include';
-	
+
 	/**	@var		string		$type			Plugin type (pre|post) */
 	protected $type				= 'pre';
-	
+
 	/**
 	 *	Apply plugin to template content.
 	 *	@access		public
@@ -59,7 +59,7 @@ class Include extends \CeusMedia\TemplateEngine\PluginAbstract{
 		for( $i=0; $i<count( $matches[0] ); $i++ ){
 			$hash		= 'STE'.uniqid();															//  insert a hash value as replacement
 			$filePath	= $matches[2][$i];
-			$content	= \CeusMedia\TemplateEngine\Template::render( $filePath, $elements );
+			$content	= \CeusMedia\TemplateEngine\Template::renderFile( $filePath, $elements );
 			$elements[$hash]	= $content;
 			$value		= '<%?'.$hash.$matches[3][$i].'%>';
 			$template	= str_replace( $matches[0][$i], $value, $template );
