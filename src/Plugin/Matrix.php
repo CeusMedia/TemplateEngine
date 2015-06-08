@@ -17,28 +17,24 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@category		cmModules
- *	@package		STE.Plugin
+ *	@category		Library
+ *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011 Christian Würker
+ *	@copyright		2011-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			15.09.2011
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/TemplateEngine
  */
+namespace CeusMedia\TemplateEngine\Plugin;
 /**
  *	
- *	@category		cmModules
- *	@package		STE.Plugin
- *	@implements		CMM_STE_Plugin_Interface
+ *	@category		Library
+ *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011 Christian Würker
+ *	@copyright		2011-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			15.09.2011
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-class CMM_STE_Plugin_Matrix extends CMM_STE_Plugin_Abstract{
+class Matrix extends \CeusMedia\TemplateEngine\PluginAbstract{
 
 	/**	@var		string		$keyword		Plugin keyword */
 	protected $keyword			= 'matrix';
@@ -104,12 +100,12 @@ class CMM_STE_Plugin_Matrix extends CMM_STE_Plugin_Abstract{
 		$depth	= $this->options['depth'];
 		$parts	= explode( $this->options['delimiter'], $key );
 		if( count( $parts ) != $depth )
-			throw new InvalidArgumentException( 'Depth ('.count( $parts ).') of key ('.$key.') does not match matrix depth ('.$depth.')' );
+			throw new \InvalidArgumentException( 'Depth ('.count( $parts ).') of key ('.$key.') does not match matrix depth ('.$depth.')' );
 		$data	= $this->options['data'];
 		for( $i=0; $i<$depth; $i++ ){
 			if( !isset( $data[$parts[$i]] ) ){
 				if( $this->options['mode'] == 'strict' )
-					throw new Exception( 'Invalid: '.implode( '.', array_slice( $parts, 0, $i + 1) ) );
+					throw new \Exception( 'Invalid: '.implode( '.', array_slice( $parts, 0, $i + 1) ) );
 				else if( $this->options['mode'] == 'verbose' )
 					$data	= 'Missing: '.$key;
 				else

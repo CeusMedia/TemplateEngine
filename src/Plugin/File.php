@@ -17,28 +17,24 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@category		cmModules
- *	@package		STE.Plugin
+ *	@category		Library
+ *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011 Christian Würker
+ *	@copyright		2011-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			15.09.2011
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/TemplateEngine
  */
+namespace CeusMedia\TemplateEngine\Plugin;
 /**
  *	
- *	@category		cmModules
- *	@package		STE.Plugin
- *	@implements		CMM_STE_Plugin_Interface
+ *	@category		Library
+ *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011 Christian Würker
+ *	@copyright		2011-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			15.09.2011
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/TemplateEngine
  */ 
-class CMM_STE_Plugin_File extends CMM_STE_Plugin_Abstract{
+class File extends \CeusMedia\TemplateEngine\PluginAbstract{
 
 	/**	@var		string		$keyword		Plugin keyword */
 	protected $keyword			= 'file';
@@ -82,7 +78,7 @@ class CMM_STE_Plugin_File extends CMM_STE_Plugin_Abstract{
 	 */
 	public function work( $template, &$elements ){
 		if( empty( $this->options['path'] ) )
-			throw new RuntimeException( 'No path set' );
+			throw new \RuntimeException( 'No path set' );
 		$matches	= array();
 		$pattern	= '/<(\?)?%'.$this->keyword.'\((.+)\)(\|.+)?%>/U';
 		preg_match_all( $pattern, $template, $matches );
@@ -92,14 +88,14 @@ class CMM_STE_Plugin_File extends CMM_STE_Plugin_Abstract{
 		for( $i=0; $i<count( $matches[0] ); $i++ ){
 			try{
 				$hash		= 'STE'.uniqid();														//  create unique hash value
-				$content	= File_Reader::load( $this->getFileNameFromKey( $matches[2][$i] ) );	//  load file content
+				$content	= \File_Reader::load( $this->getFileNameFromKey( $matches[2][$i] ) );	//  load file content
 				$content	= preg_replace( '/<%(.+)%>/U', '&lt;%$1%&gt;', $content );				//  escape tags in content
 				$elements[$hash]	= $content;														//  store file content in elements by its hash value as new template tag
 				$value		= '<%?'.$hash.$matches[3][$i].'%>';										//  replacement for tag is a hash tag				
 			}
 			catch( Exception $e ){																	//  catch all exceptions
 				if( $this->options['mode'] == 'strict' )											//  strict error mode
-					throw new Exception_IO( 'Invalid file', 0, $matches[2][$i], $e );				//  throw an exception
+					throw new \Exception_IO( 'Invalid file', 0, $matches[2][$i], $e );				//  throw an exception
 				else if( $this->options['mode'] == 'verbose' )										//  verbose error mode
 					$value	= 'Missing file: '.$matches[2][$i];										//  
 				else

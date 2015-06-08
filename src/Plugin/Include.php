@@ -17,28 +17,24 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@category		cmModules
- *	@package		STE.Plugin
+ *	@category		Library
+ *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011 Christian Würker
+ *	@copyright		2011-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			15.09.2011
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/TemplateEngine
  */
+namespace CeusMedia\TemplateEngine\Plugin;
 /**
  *	
- *	@category		cmModules
- *	@package		STE.Plugin
- *	@implements		CMM_STE_Plugin_Interface
+ *	@category		Library
+ *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011 Christian Würker
+ *	@copyright		2011-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			15.09.2011
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-class CMM_STE_Plugin_Include extends CMM_STE_Plugin_Abstract implements CMM_STE_Plugin_Interface {
+class Include extends \CeusMedia\TemplateEngine\PluginAbstract{
 	
 	/**	@var		string		$keyword		Plugin keyword */
 	protected $keyword			= 'include';
@@ -63,7 +59,7 @@ class CMM_STE_Plugin_Include extends CMM_STE_Plugin_Abstract implements CMM_STE_
 		for( $i=0; $i<count( $matches[0] ); $i++ ){
 			$hash		= 'STE'.uniqid();															//  insert a hash value as replacement
 			$filePath	= $matches[2][$i];
-			$content	= CMM_STE_Template::render( $filePath, $elements );
+			$content	= \CeusMedia\TemplateEngine\Template::render( $filePath, $elements );
 			$elements[$hash]	= $content;
 			$value		= '<%?'.$hash.$matches[3][$i].'%>';
 			$template	= str_replace( $matches[0][$i], $value, $template );

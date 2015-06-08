@@ -17,28 +17,24 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@category		cmModules
- *	@package		STE.Plugin
+ *	@category		Library
+ *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011 Christian Würker
+ *	@copyright		2011-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			15.09.2011
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/TemplateEngine
  */
+namespace CeusMedia\TemplateEngine\Plugin;
 /**
  *	
- *	@category		cmModules
- *	@package		STE.Plugin
- *	@implements		CMM_STE_Plugin_Interface
+ *	@category		Library
+ *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011 Christian Würker
+ *	@copyright		2011-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			15.09.2011
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-class CMM_STE_Plugin_Tidy extends CMM_STE_Plugin_Abstract {
+class Tidy extends \CeusMedia\TemplateEngine\PluginAbstract{
 	
 	/**	@var		array		$options		Plugin options */
 	protected $options			= array(
@@ -100,8 +96,8 @@ class CMM_STE_Plugin_Tidy extends CMM_STE_Plugin_Abstract {
 	 */
 	public function work( $template, &$elements ){
 		if( !extension_loaded( 'tidy' ) )
-			throw new RuntimeException( 'tidy extension not loaded' );
-    	$tidy = new tidy;
+			throw new \RuntimeException( 'tidy extension not loaded' );
+    	$tidy = new \tidy;
 //    	$c	 = new Alg_Time_Clock();
 		$template	= $tidy->repairString( $template, $this->options, 'utf8' );
 //		remark( $c->stop() );
