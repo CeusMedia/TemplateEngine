@@ -17,27 +17,24 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@category		cmModules
- *	@package		STE.Filter
+ *	@category		Library
+ *	@package		CeusMedia_TemplateEngine
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011 Christian Würker
+ *	@copyright		2011-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			22.09.2011
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/TemplateEngine
  */
+namespace CeusMedia\TemplateEngine\Filter;
 /**
  *	Filter to strip tags etc.
- *	@category		cmModules
- *	@package		STE.Filter
+ *	@category		Library
+ *	@package		CeusMedia_TemplateEngine
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011 Christian Würker
+ *	@copyright		2011-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			22.09.2011
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-class CMM_STE_Filter_Strip extends CMM_STE_Filter_Abstract{
+class Strip extends \CeusMedia\TemplateEngine\FilterAbstract{
 
 	/**	@var		array		$keywords		Keywords to bind filter to on register */
 	protected $keywords	= array( 'strip' );
@@ -60,13 +57,13 @@ class CMM_STE_Filter_Strip extends CMM_STE_Filter_Abstract{
 					$content	= trim( $content );
 					break;
 				case 'comments':
-					$content	= Alg_Text_Filter::stripComments( $content );
+					$content	= \Alg_Text_Filter::stripComments( $content );
 					break;
 				case 'styles':
-					$content	= Alg_Text_Filter::stripStyles( $content );
+					$content	= \Alg_Text_Filter::stripStyles( $content );
 					break;
 				case 'scripts':
-					$content	= Alg_Text_Filter::stripScripts( $content );
+					$content	= \Alg_Text_Filter::stripScripts( $content );
 					break;
 			}
 		}

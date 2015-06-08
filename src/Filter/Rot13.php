@@ -17,27 +17,24 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@category		cmModules
- *	@package		STE.Filter
+ *	@category		Library
+ *	@package		CeusMedia_TemplateEngine
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011 Christian Würker
+ *	@copyright		2011-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			15.09.2011
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/TemplateEngine
  */
+namespace CeusMedia\TemplateEngine\Filter;
 /**
  *	ROT13 Filter.
- *	@category		cmModules
- *	@package		STE.Filter
+ *	@category		Library
+ *	@package		CeusMedia_TemplateEngine
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011 Christian Würker
+ *	@copyright		2011-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			15.09.2011
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-class CMM_STE_Filter_Rot13 extends CMM_STE_Filter_Abstract{
+class CMM_STE_Filter_Rot13 extends \CeusMedia\TemplateEngine\FilterAbstract{
 
 	/**	@var		array		$keywords		Keywords to bind filter to on register */
 	protected $keywords	= array( 'rot13' );

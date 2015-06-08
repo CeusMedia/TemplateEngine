@@ -17,27 +17,24 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@category		cmModules
- *	@package		STE.Filter
+ *	@category		Library
+ *	@package		CeusMedia_TemplateEngine_Filter
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011 Christian Würker
+ *	@copyright		2011-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			22.09.2011
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/TemplateEngine
  */
+namespace CeusMedia\TemplateEngine\Filter;
 /**
  *	Filter to display code of several languages in several ways.
- *	@category		cmModules
- *	@package		STE.Filter
+ *	@category		Library
+ *	@package		CeusMedia_TemplateEngine_Filter
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011 Christian Würker
+ *	@copyright		2011-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			22.09.2011
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-class CMM_STE_Filter_Code extends CMM_STE_Filter_Abstract{
+class Code extends \CeusMedia\TemplateEngine\FilterAbstract{
 
 	/**	@var		array		$keywords		Keywords to bind filter to on register */
 	protected $keywords	= array( 'code' );
@@ -55,17 +52,17 @@ class CMM_STE_Filter_Code extends CMM_STE_Filter_Abstract{
 		switch( $format ){
 			case 'xmp':
 				$class		= $language ? $language : NULL;											//  get CSS class from chosen language
-				$content	= UI_HTML_Tag::create( 'xmp', $content, array( 'class' => $class ) );
+				$content	= \UI_HTML_Tag::create( 'xmp', $content, array( 'class' => $class ) );
 				break;
 			case 'highlight':
 				$content	= highlight_string( $content, TRUE );
 				break;
 			case 'json':
-				$content	= ADT_JSON_Formater::format( $content );
+				$content	= \ADT_JSON_Formater::format( $content );
 				break;
 			default:
 				$class		= $language ? $language : NULL;											//  get CSS class from chosen language
-				$content	= UI_HTML_Tag::create( 'code', $content, array( 'class' => $class ) );	//  create code tag
+				$content	= \UI_HTML_Tag::create( 'code', $content, array( 'class' => $class ) );	//  create code tag
 				break;
 		}
 		return $content;
