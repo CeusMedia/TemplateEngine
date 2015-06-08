@@ -26,6 +26,7 @@
  *	@since			15.09.2011
  *	@version		$Id$
  */
+namespace CeusMedia\TemplateEngine;
 /**
  *	Interface for template engine filters.
  *	@category		cmModules
@@ -37,7 +38,7 @@
  *	@since			15.09.2011
  *	@version		$Id$
  */
-interface CMM_STE_Filter_Interface{
+interface FilterInterface{
 
 	/**
 	 *	Constructor.

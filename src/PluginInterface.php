@@ -26,6 +26,7 @@
  *	@since			15.09.2011
  *	@version		$Id$
  */
+namespace CeusMedia\TemplateEngine;
 /**
  *	
  *	@category		cmModules
@@ -37,7 +38,7 @@
  *	@since			15.09.2011
  *	@version		$Id$
  */
-interface CMM_STE_Plugin_Interface{
+interface PluginInterface{
 
 	/**
 	 *	Constructor.

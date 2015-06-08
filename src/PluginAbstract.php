@@ -26,6 +26,7 @@
  *	@since			15.09.2011
  *	@version		$Id$
  */
+namespace CeusMedia\TemplateEngine;
 /**
  *	Abstraction for plugins.
  *	@category		cmModules
@@ -38,7 +39,7 @@
  *	@since			15.09.2011
  *	@version		$Id$
  */
-abstract class CMM_STE_Plugin_Abstract implements CMM_STE_Plugin_Interface{
+abstract class PluginAbstract implements \CeusMedia\TemplateEngine\PluginInterface{
 	
 	/**	@var		string		$keyword		Plugin keyword */
 	protected $keyword			= NULL;

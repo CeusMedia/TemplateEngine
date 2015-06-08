@@ -27,6 +27,7 @@
  *	@since			03.03.2007
  *	@version		$Id$
  */
+namespace CeusMedia\TemplateEngine;
 /**
  *	Template Class.
  *	@category		cmModules
@@ -40,7 +41,7 @@
  *	@since			03.03.2007
  *	@version		$Id$
  */
-class CMM_STE_Template{
+class Template{
 
 	/**	@var		string		$className		Name of template class */
 	protected $className;
@@ -99,11 +100,11 @@ class CMM_STE_Template{
 		$number	= 0;
 		foreach( $elements as $key => $value ){
 			if( !( is_string( $key ) || is_int( $key ) || is_float( $key ) ) )
-				throw new InvalidArgumentException( 'Invalid key type "'.gettype( $key ).'"' );
+				throw new \InvalidArgumentException( 'Invalid key type "'.gettype( $key ).'"' );
 			if( !strlen( trim( $key ) ) )
-				throw new InvalidArgumentException( 'Key cannot be empty' );
+				throw new \InvalidArgumentException( 'Key cannot be empty' );
 
-			$isListObject	= $value instanceof ArrayObject || $value instanceof ADT_List_Dictionary;
+			$isListObject	= $value instanceof \ArrayObject || $value instanceof \ADT_List_Dictionary;
 			$isPrimitive	= is_string( $value ) || is_int( $value ) || is_float( $value ) || is_bool( $value );
 			$isTemplate		= $value instanceof $this->className;
 			if( is_null( $value ) )
@@ -120,7 +121,7 @@ class CMM_STE_Template{
 			else if( is_object( $value ) )
 				$this->addObject( $key, $value, array(), $overwrite );
 			else
-				throw new InvalidArgumentException( 'Unsupported type '.gettype( $value ).' for "'.$key.'"' );
+				throw new \InvalidArgumentException( 'Unsupported type '.gettype( $value ).' for "'.$key.'"' );
 		}
 		return $number;
 	}
@@ -128,14 +129,14 @@ class CMM_STE_Template{
 	public function addObject( $name, $object, $steps = array(), $overwrite = FALSE ){
 		$number		= 0;
 		$steps[]	= $name;
-		$reflection	= new ReflectionObject( $object );
+		$reflection	= new \ReflectionObject( $object );
 		foreach( $reflection->getProperties() as $property ){
 			$key		= $property->getName();
 			$methodName	= 'get'.ucFirst( $key );
 			if( $property->isPublic() )
 				$value	= $property->getValue( $object );
 			else if( $reflection->hasMethod( $methodName ) )
-				$value	= Alg_Object_MethodFactory::callObjectMethod( $object, $methodName );
+				$value	= \Alg_Object_MethodFactory::callObjectMethod( $object, $methodName );
 			else
 				continue;
 			$label	= implode( ".", $steps ).".".$key;
@@ -158,7 +159,7 @@ class CMM_STE_Template{
 		$number		= 0;
 		$steps[]	= $name;
 		foreach( $data as $key => $value ){
-			$isListObject	= $value instanceof ArrayObject || $value instanceof ADT_List_Dictionary;
+			$isListObject	= $value instanceof \ArrayObject || $value instanceof \ADT_List_Dictionary;
 			if( is_array( $value ) || $isListObject  ){
 				$number	+= $this->addArrayRecursive( $key, $value, $steps );
 			}
@@ -187,26 +188,26 @@ class CMM_STE_Template{
 	 *	If no keywords are given the filter's default keywords are registered.
 	 *	You can use 'registerFilter' to avoid building an instance.
 	 *	@access		public
-	 *	@param		CMM_STE_Filter_Interface	$filter		Instance of filter
+	 *	@param		\CeusMedia\TemplateEngine\FilterInterface	$filter		Instance of filter
 	 *	@param		array						$keywords	List of keywords to bind filter on
 	 *	@return
 	 */
-	public static function addFilter( CMM_STE_Filter_Interface $filter, $keywords = array() ){
+	public static function addFilter( \CeusMedia\TemplateEngine\FilterInterface $filter, $keywords = array() ){
 		if( !$keywords )
 			$keywords	= $filter->getKeywords();
 		foreach( $keywords as $keyword ){
 			if( array_key_exists( $keyword, self::$filters ) )
-				throw new Exception( 'Filter keyword "'.$keyword.'" is already taken by another filter' );
+				throw new \Exception( 'Filter keyword "'.$keyword.'" is already taken by another filter' );
 			self::$filters[$keyword]	= $filter;
 		}
 	}
 
-	public static function addPlugin( CMM_STE_Plugin_Interface $plugin ){
+	public static function addPlugin( \CeusMedia\TemplateEngine\PluginInterface $plugin ){
 		$keyword	= $plugin->getKeyword();
 		$priority	= $plugin->getPriority();
 		foreach( self::$plugins as $pluginsPriority => $plugins )
 			foreach( $plugins as $pluginInstance )
-				if( $pluginInstance instanceof CMM_STE_Plugin_Matrix )
+				if( $pluginInstance instanceof \CeusMedia\TemplateEngine\Plugin\Matrix )
 					if( $pluginInstance->getKeyword() == $keyword )
 						throw new Exception( 'Plugin keyword "'.$keyword.'" is already taken by another plugin' );
 		if( !isset( self::$plugins[$priority] ) )
@@ -240,7 +241,7 @@ class CMM_STE_Template{
 				$arguments	= isset( $parts[1] ) ? explode( ',', $parts[1] ) : array();
 				if( array_key_exists( $filter, self::$filters ) ){
 					if(	is_string( self::$filters[$filter] ) )
-						self::$filters[$filter]	= Alg_Object_Factory::createObject( self::$filters[$filter] );
+						self::$filters[$filter]	= \Alg_Object_Factory::createObject( self::$filters[$filter] );
 					$this->tmp	= self::$filters[$filter]->apply( $this->tmp, $arguments );
 				}
 			}
@@ -305,8 +306,8 @@ class CMM_STE_Template{
 		foreach( $tags as $key => $value )															//  
 			$tags[$key]	= preg_replace( '@(<%\??)|%>@', "", $value );								//  
 		if( $this->fileName )																		//  
-			throw new Exception_Template( Exception_Template::FILE_LABELS_MISSING, $this->fileName, $tags );
-		throw new Exception_Template( Exception_Template::LABELS_MISSING, NULL, $tags );
+			throw new \CeusMedia\TemplateEngine\Exception\Template( Exception_Template::FILE_LABELS_MISSING, $this->fileName, $tags );
+		throw new \CeusMedia\TemplateEngine\Exception\Template( Exception_Template::LABELS_MISSING, NULL, $tags );
 	}
 
 	/**
@@ -395,9 +396,9 @@ class CMM_STE_Template{
 		if( is_string( $keywords ) )
 			$keywords	= array( $keywords );
 		if( !is_array( $keywords ) )
-			throw new InvalidArgumentException( 'Filter keywords must be an array of keywords or a string with a single keyword' );
+			throw new \InvalidArgumentException( 'Filter keywords must be an array of keywords or a string with a single keyword' );
 		if( !$keywords )
-			throw new InvalidArgumentException( 'No filter keywords given' );
+			throw new \InvalidArgumentException( 'No filter keywords given' );
 		foreach( $keywords as $keyword ){
 			if( array_key_exists( $keyword, self::$filters ) )
 				throw new Exception( 'Filter keyword "'.$keyword.'" is already taken by another filter' );
@@ -464,13 +465,13 @@ class CMM_STE_Template{
 		else
 			self::$loaded[$filePath]++;																//  count file load
 		if( self::$loaded[$filePath] > 100 )														//  file loaded 100 times
-			throw new Exception( 'Template "'.$filePath.'" loaded too often' );						//  break because limit is reached
+			throw new \Exception( 'Template "'.$filePath.'" loaded too often' );						//  break because limit is reached
 
 		$this->fileName	= $fileName;																//  set template file name, needed for exception handling
 		$content	= self::$cache ? self::$cache->get( self::$cachePrefix.$filePath ) : NULL;		//  try to get file content from cache
 		if( !$content ){																			//  no cached content
 			if( !file_exists( $filePath ) )															//  file is not existing
-				throw new Exception_Template( Exception_Template::FILE_NOT_FOUND, $filePath );		//  break with exception
+				throw new \CeusMedia\TemplateEngine\Exception\Template( \CeusMedia\TemplateEngine\Exception\Template::FILE_NOT_FOUND, $filePath );		//  break with exception
 			$content	= File_Reader::load( $filePath );											//  load file content
 			if( self::$cache )																		//  cache is enabled
 				self::$cache->set( self::$cachePrefix.$filePath, $content );						//  store file content in cache

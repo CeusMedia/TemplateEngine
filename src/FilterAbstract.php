@@ -26,6 +26,7 @@
  *	@since			15.09.2011
  *	@version		$Id$
  */
+namespace CeusMedia\TemplateEngine;
 /**
  *	Abstraction for template engine filters.
  *	@category		cmModules
@@ -38,7 +39,7 @@
  *	@since			15.09.2011
  *	@version		$Id$
  */
-abstract class CMM_STE_Filter_Abstract implements CMM_STE_Filter_Interface{
+abstract class FilterAbstract implements \CeusMedia\TemplateEngine\FilterInterface{
 
 	/**	@var		array		$keywords		Keywords to bind filter to on register */
 	protected $keywords	= array();
@@ -77,7 +78,7 @@ abstract class CMM_STE_Filter_Abstract implements CMM_STE_Filter_Interface{
 	 */
 	public function setKeywords( $keywords, $append = FALSE ){
 		if( !is_array( $keywords ) )
-			throw new InvalidArgumentException( 'Keywords must be of array' );
+			throw new \InvalidArgumentException( 'Keywords must be of array' );
 		if( $append )
 			foreach( $keywords as $keyword )
 				$this->keywords[]	= $keyword;
