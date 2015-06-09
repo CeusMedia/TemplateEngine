@@ -60,7 +60,7 @@ class Inclusion extends \CeusMedia\TemplateEngine\PluginAbstract{
 			$hash		= 'STE'.uniqid();															//  insert a hash value as replacement
 			$filePath	= $matches[2][$i];
 			$content	= \CeusMedia\TemplateEngine\Template::renderFile( $filePath, $elements );
-			$elements[$hash]	= $content;
+			$elements[$hash]	= trim( $content );
 			$value		= '<%?'.$hash.$matches[3][$i].'%>';
 			$template	= str_replace( $matches[0][$i], $value, $template );
 		}

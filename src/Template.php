@@ -17,29 +17,24 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@category		cmModules
- *	@package		STE
+ *	@category		Library
+ *	@package		CeusMedia_TemplateEngine
  *	@author			David Seebacher <dseebacher@gmail.com>
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
- *	@copyright		2007-2011 Christian Würker
+ *	@copyright		2007-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			03.03.2007
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 namespace CeusMedia\TemplateEngine;
 /**
  *	Template Class.
- *	@category		cmModules
- *	@package		STE
- *	@uses			Exception_Template
+ *	@category		Library
+ *	@package		CeusMedia_TemplateEngine
  *	@author			David Seebacher <dseebacher@gmail.com>
  *	@author			Christian Würker <christian.wuerker@ceus-media.de>
- *	@copyright		2007-2011 Christian Würker
+ *	@copyright		2007-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			03.03.2007
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 class Template{
 
@@ -54,7 +49,7 @@ class Template{
 	/**	@var		CMM_SEA_Adapter_Interface	$storage		Storage instance to be used for caching */
 	protected static $cache;
 	protected static $cachePrefix;
-	
+
 	protected static $pathTemplates	= NULL;
 	/**	@var		array		$loaded			List of loaded templates, used to avoid to load templates to often */
 	protected static $loaded		= array();
@@ -69,7 +64,7 @@ class Template{
 	public static function getTemplatePath(){
 		return self::$pathTemplates;
 	}
-	
+
 	/**
 	 *	Constructor
 	 *	@access		public
@@ -82,13 +77,17 @@ class Template{
 		$this->className	= get_class( $this );
 		$this->fileName		= $fileName;
 		$this->setTemplate( $fileName );
-		$this->add( $elements ); 
+		$this->add( $elements );
 	}
-	
+
+	public function __toString(){
+		return $this->render();
+	}
+
 	/**
-	 *	Adds an associative array with labels and elements to the template and returns number of added elements. 
-	 *	@param		array 		Array where the <b>key</b> can be a string, integer or 
-	 *							float and is the <b>label</b>. The <b>value</b> can be a 
+	 *	Adds an associative array with labels and elements to the template and returns number of added elements.
+	 *	@param		array 		Array where the <b>key</b> can be a string, integer or
+	 *							float and is the <b>label</b>. The <b>value</b> can be a
 	 *							string, integer, float or a template object and represents
 	 *							the element to add.
 	 *	@param		boolean		if TRUE an a tag is already used, it will overwrite it
@@ -171,7 +170,7 @@ class Template{
 		}
 		return $number;
 	}
-	
+
 	/**
 	 *	Adds one Element.
 	 *	@param		string		$tag		Tag name
@@ -209,12 +208,12 @@ class Template{
 			foreach( $plugins as $pluginInstance )
 				if( $pluginInstance instanceof \CeusMedia\TemplateEngine\Plugin\Matrix )
 					if( $pluginInstance->getKeyword() == $keyword )
-						throw new Exception( 'Plugin keyword "'.$keyword.'" is already taken by another plugin' );
+						throw new \Exception( 'Plugin keyword "'.$keyword.'" is already taken by another plugin' );
 		if( !isset( self::$plugins[$priority] ) )
 			self::$plugins[$priority]	= array();
 		self::$plugins[$priority][]	= $plugin;
 	}
-	
+
 	/**
 	 *	Adds another Template.
 	 *	@param		string		tagname
@@ -246,7 +245,7 @@ class Template{
 				}
 			}
 		}
-		return $this->tmp;	
+		return $this->tmp;
 	}
 
 	/**
@@ -265,49 +264,25 @@ class Template{
 	}
 
 	/**
-	 *	Creates an output string from the templatefile where all labels will be replaced with apropriate elements.
-	 *	If a non optional label wasn't specified, the method will throw a Template Exception
-	 *	@access		public
-	 *	@return		string
+	 *	Counts loadings of template files and excepts if a file has been loaded too often.
+	 *	@static
+	 *	@access		protected
+	 *	@param		string		$filePath		...
+	 *	@return		void
+	 *	@throws		\CeusMedia\TemplateEngine\Exception\Limit
+	 *	@todo		make limit configurable
 	 */
-	public function create(){
-		$out			= $this->template;															//  local copy of set template content
-		$callbackFilter	= array( $this, 'applyFilters' );											//  create callback for applying filters on replacement of element labels
-		
-		$this->applyPlugins( $out, 'pre' );															//  apply pre processing plugins
-
-		foreach( $this->elements as $label => $element ){											//  iterate over all registered element containers
-		
-			$tmp = '';																				//  
-//			foreach( $labelElements as $element ){													//  iterate over all elements with current element container
-	 			if( is_object( $element ) ){														//  element is an object
-	 				if( !( $element instanceof $this->className ) )									//  object is not an template of this template engine
-						continue;																	//  skip this one
-					$element = $element->create();													//  render template before concat
-	 			}
-				$tmp	.= $element;
-//			}
-			$this->tmp	= $tmp;																		//  store current temporary element content for filters
-			$pattern	= '/<%(\?)?('.$label.')(\|.+)?%>/';											//  create regular expression for element label with filter support
-			$out		= preg_replace_callback( $pattern, $callbackFilter, $out );					//  realize placeholder, apply filters on content
- 		}
-		$out = preg_replace( '/<%\?.*%>/U', '', $out );    											//  remove left over optional placeholders
-		$out = preg_replace( '/\n\s+\n/', "\n", $out );												//  remove double line breaks
-
-		$this->applyPlugins( $out, 'post' );														//  apply post processing plugins
-
-		$out = preg_replace( '/<%\??\w+\(.+\)%>/U', '', $out );    									//  remove left over plugin calls @todo kriss: handle this with exceptions later
-
-		$tags = array();																			//  create container for left over placeholders
-		if( preg_match_all( '/<%.*%>/U', $out, $tags ) === 0 )										//  no more placeholders left over
-		    return $out; 																			//  return final result
-
-		$tags	= array_shift( $tags );																//  
-		foreach( $tags as $key => $value )															//  
-			$tags[$key]	= preg_replace( '@(<%\??)|%>@', "", $value );								//  
-		if( $this->fileName )																		//  
-			throw new \CeusMedia\TemplateEngine\Exception\Template( Exception_Template::FILE_LABELS_MISSING, $this->fileName, $tags );
-		throw new \CeusMedia\TemplateEngine\Exception\Template( Exception_Template::LABELS_MISSING, NULL, $tags );
+	static protected function checkLoadLimit( $filePath ){
+		if( !in_array( $filePath, self::$loaded ) )													//  file not found in load list
+			self::$loaded[$filePath] = 1;															//  append file to load list
+		else
+			self::$loaded[$filePath]++;																//  count file load
+		if( self::$loaded[$filePath] > 100 ){														//  file loaded 100 times
+			throw new \CeusMedia\TemplateEngine\Exception\Limit(									//  break because limit is reached
+				'Load limit reached for template "'.$filePath.'"',
+				\CeusMedia\TemplateEngine\Exception\Limit::FILE_LOAD
+			);
+		}
 	}
 
 	/**
@@ -342,7 +317,7 @@ class Template{
 		}
 		return $list;
 	}
-	
+
 	/**
 	 *	Returns all defined labels.
 	 *	@param		int			$type		Label Type: 0=all, 1=mandatory, 2=optional
@@ -350,7 +325,7 @@ class Template{
 	 *	@return		array					Array of Labels
 	 */
 	public function getLabels( $type = 0, $xml = TRUE ){
- 		$content = preg_replace( '/<%\??--.*--%>/sU', '', $this->template );	
+ 		$content = preg_replace( '/<%\??--.*--%>/sU', '', $this->template );
 		switch( $type ){
 			case 2:
 				preg_match_all( '/<%(\?.*)%>/U', $content, $tags );
@@ -401,26 +376,82 @@ class Template{
 			throw new \InvalidArgumentException( 'No filter keywords given' );
 		foreach( $keywords as $keyword ){
 			if( array_key_exists( $keyword, self::$filters ) )
-				throw new Exception( 'Filter keyword "'.$keyword.'" is already taken by another filter' );
+				throw new \Exception( 'Filter keyword "'.$keyword.'" is already taken by another filter' );
 			self::$filters[$keyword]	= $className;
 		}
 	}
-	
+
 	/**
-	 *	Renders a Template with given Elements statically.
+	 *	Renders output of given template file or string with applied elements, filters and plugins.
+	 *	All labels will be replaced with apropriate elements.
+	 *	All registered plugins will ... (be applied before and after label replacement.
+	 *	All registered filters will ... (be applied 
+	 *	If a non optional label wasn't specified, the method will throw a Template Exception
+	 *	@access		public
+	 *	@return		string
+	 */
+	public function render(){
+		$out			= $this->template;															//  local copy of set template content
+		$callbackFilter	= array( $this, 'applyFilters' );											//  create callback for applying filters on replacement of element labels
+
+		$this->applyPlugins( $out, 'pre' );															//  apply pre processing plugins
+
+		foreach( $this->elements as $label => $element ){											//  iterate over all registered element containers
+			$tmp = '';																				//  
+//			foreach( $labelElements as $element ){													//  iterate over all elements with current element container
+	 			if( is_object( $element ) ){														//  element is an object
+	 				if( !( $element instanceof $this->className ) )									//  object is not an template of this template engine
+						continue;																	//  skip this one
+					$element = $element->create();													//  render template before concat
+	 			}
+				$tmp	.= $element;
+//			}
+			$this->tmp	= $tmp;																		//  store current temporary element content for filters
+			$pattern	= '/<%(\?)?('.$label.')(\|.+)?%>/';											//  create regular expression for element label with filter support
+			$out		= preg_replace_callback( $pattern, $callbackFilter, $out );					//  realize placeholder, apply filters on content
+ 		}
+		$out = preg_replace( '/<%\?.*%>/U', '', $out );    											//  remove left over optional placeholders
+		$out = preg_replace( '/\n\s+\n/', "\n", $out );												//  remove double line breaks
+
+		$this->applyPlugins( $out, 'post' );														//  apply post processing plugins
+
+		$out = preg_replace( '/<%\??\w+\(.+\)%>/U', '', $out );    									//  remove left over plugin calls @todo kriss: handle this with exceptions later
+
+		$tags = array();																			//  create container for left over placeholders
+		if( preg_match_all( '/<%.*%>/U', $out, $tags ) === 0 )										//  no more placeholders left over
+			return $out; 																			//  return final result
+
+		$tags	= array_shift( $tags );																//  
+		foreach( $tags as $key => $value )															//  
+			$tags[$key]	= preg_replace( '@(<%\??)|%>@', "", $value );								//  
+		if( $this->fileName )																		//  
+			throw new \CeusMedia\TemplateEngine\Exception\Template(
+				\CeusMedia\TemplateEngine\Exception\Template::FILE_LABELS_MISSING,
+				$this->fileName,
+				$tags
+			);
+		throw new \CeusMedia\TemplateEngine\Exception\Template(
+			\CeusMedia\TemplateEngine\Exception\Template::LABELS_MISSING,
+			NULL,
+			$tags
+		);
+	}
+
+	/**
+	 *	Renders a template file with given elements statically.
 	 *	@access		public
 	 *	@static
 	 *	@param		string		$fileName		File Name of Template File
 	 *	@param		array		$elements		List of Elements {@link add()}
 	 *	@return		void
 	 */
-	public static function render( $fileName, $elements = array() ){
+	public static function renderFile( $fileName, $elements = array() ){
 		$template	= new self( $fileName, $elements );
-		return $template->create();
+		return $template->render();
 	}
 
 	/**
-	 *	Renders a Template String with given Elements statically.
+	 *	Renders a template string with given elements statically.
 	 *	@access		public
 	 *	@static
 	 *	@param		string		$string			Template String
@@ -433,7 +464,7 @@ class Template{
 		$template->template		= $string;
 		$template->fileName		= $fileName;
 		$template->add( $elements );
-		return $template->create();
+		return $template->render();
 	}
 
 	/**
@@ -458,21 +489,15 @@ class Template{
 	public function setTemplate( $fileName ){
 		if( empty( $fileName ) )																	//  no file name given
 			return FALSE;																			//  return with negative result
-			
-		$filePath	= self::$pathTemplates.$fileName;												//  get file within set file path
-		if( !in_array( $filePath, self::$loaded ) )													//  file not found in load list
-			self::$loaded[$filePath] = 1;															//  append file to load list
-		else
-			self::$loaded[$filePath]++;																//  count file load
-		if( self::$loaded[$filePath] > 100 )														//  file loaded 100 times
-			throw new \Exception( 'Template "'.$filePath.'" loaded too often' );						//  break because limit is reached
 
+		$filePath	= self::$pathTemplates.$fileName;												//  get file within set file path
+		$this->checkLoadLimit( $filePath );															//  check load limit for this template
 		$this->fileName	= $fileName;																//  set template file name, needed for exception handling
 		$content	= self::$cache ? self::$cache->get( self::$cachePrefix.$filePath ) : NULL;		//  try to get file content from cache
 		if( !$content ){																			//  no cached content
 			if( !file_exists( $filePath ) )															//  file is not existing
 				throw new \CeusMedia\TemplateEngine\Exception\Template( \CeusMedia\TemplateEngine\Exception\Template::FILE_NOT_FOUND, $filePath );		//  break with exception
-			$content	= File_Reader::load( $filePath );											//  load file content
+			$content	= \FS_File_Reader::load( $filePath );										//  load file content
 			if( self::$cache )																		//  cache is enabled
 				self::$cache->set( self::$cachePrefix.$filePath, $content );						//  store file content in cache
 		}
