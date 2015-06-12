@@ -17,26 +17,24 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@category		cmModules
- *	@package		STE.Plugin
- *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011 Christian Würker
+ *	@category		Library
+ *	@package		CeusMedia_TemplateEngine
+ *	@author			David Seebacher <dseebacher@gmail.com>
+ *	@author			Christian Würker <christian.wuerker@ceus-media.de>
+ *	@copyright		2007-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			15.09.2011
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 namespace CeusMedia\TemplateEngine;
 /**
- *	
- *	@category		cmModules
- *	@package		STE.Plugin
- *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011 Christian Würker
+ *
+ *	@category		Library
+ *	@package		CeusMedia_TemplateEngine
+ *	@author			David Seebacher <dseebacher@gmail.com>
+ *	@author			Christian Würker <christian.wuerker@ceus-media.de>
+ *	@copyright		2007-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			15.09.2011
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 interface PluginInterface{
 
@@ -78,7 +76,7 @@ interface PluginInterface{
 	 *	@return		integer
 	 */
 	public function getPriority();
-	
+
 	/**
 	 *	Returns the type (pre|post) of this plugin instance.
 	 *	@access		public

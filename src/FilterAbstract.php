@@ -17,33 +17,30 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- *	@category		cmModules
- *	@package		STE.Filter
- *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011 Christian Würker
+ *	@category		Library
+ *	@package		CeusMedia_TemplateEngine
+ *	@author			David Seebacher <dseebacher@gmail.com>
+ *	@author			Christian Würker <christian.wuerker@ceus-media.de>
+ *	@copyright		2007-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			15.09.2011
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 namespace CeusMedia\TemplateEngine;
 /**
  *	Abstraction for template engine filters.
- *	@category		cmModules
- *	@package		STE.Filter
- *	@implements		CMM_STE_Filter_Interface
- *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011 Christian Würker
+ *	@category		Library
+ *	@package		CeusMedia_TemplateEngine
+ *	@author			David Seebacher <dseebacher@gmail.com>
+ *	@author			Christian Würker <christian.wuerker@ceus-media.de>
+ *	@copyright		2007-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
- *	@link			http://code.google.com/p/cmmodules/
- *	@since			15.09.2011
- *	@version		$Id$
+ *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 abstract class FilterAbstract implements \CeusMedia\TemplateEngine\FilterInterface{
 
 	/**	@var		array		$keywords		Keywords to bind filter to on register */
 	protected $keywords	= array();
-	
+
 	/**	@var		array		$options		Filter options */
 	protected $options	= array();
 
