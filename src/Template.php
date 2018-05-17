@@ -407,7 +407,7 @@ class Template{
 				$tmp	.= $element;
 //			}
 			$this->tmp	= $tmp;																		//  store current temporary element content for filters
-			$pattern	= '/<%(\?)?('.$label.')(\|.+)?%>/';											//  create regular expression for element label with filter support
+			$pattern	= '/<%(\?)?('.preg_quote( $label, '/' ).')(\|.+)?%>/';						//  create regular expression for element label with filter support
 			$out		= preg_replace_callback( $pattern, $callbackFilter, $out );					//  realize placeholder, apply filters on content
  		}
 		$out = preg_replace( '/<%\?.*%>/U', '', $out );    											//  remove left over optional placeholders
