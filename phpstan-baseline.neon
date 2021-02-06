@@ -1,0 +1,12 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^CeusMedia\\\\TemplateEngine\\\\Exception\\\\Template\\:\\:__construct\\(\\) does not call parent constructor from Exception\\.$#"
+			count: 1
+			path: src/Exception/Template.php
+
+		-
+			message: "#^Call to an undefined method object\\:\\:create\\(\\)\\.$#"
+			count: 1
+			path: src/Template.php
+
