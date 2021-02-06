@@ -1,6 +1,6 @@
 <?php
 /**
- *	
+ *
  *
  *	Copyright (c) 2011 Christian Würker (ceusmedia.de)
  *
@@ -25,20 +25,21 @@
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 namespace CeusMedia\TemplateEngine\Plugin;
+
 /**
- *	
+ *
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
  *	@copyright		2011-2015 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
- */ 
-class File extends \CeusMedia\TemplateEngine\PluginAbstract{
-
+ */
+class File extends \CeusMedia\TemplateEngine\PluginAbstract
+{
 	/**	@var		string		$keyword		Plugin keyword */
 	protected $keyword			= 'file';
-	
+
 	/**	@var		array		$options		Plugin options */
 	protected $options			= array(
 		'path'		=> '',
@@ -55,7 +56,8 @@ class File extends \CeusMedia\TemplateEngine\PluginAbstract{
 	 *	@param		array		$options		Plugin options to set above default plugin options
 	 *	@return		void
 	 */
-	public function __construct( $options = NULL ){
+	public function __construct( array $options = array() )
+	{
 		if( isset( $options['keyword'] ) ){
 			$this->keyword	= $options['keyword'];
 			unset( $options['keyword'] );
@@ -65,10 +67,10 @@ class File extends \CeusMedia\TemplateEngine\PluginAbstract{
 			unset( $options['path'] );
 		}
 		if( !isset( $this->options['path'] ) )
-			throw new InvalidArgumentException( 'No path set' );
+			throw new \InvalidArgumentException( 'No path set' );
 		parent::__construct( $options );
 	}
-	
+
 	/**
 	 *	Apply plugin to template content.
 	 *	@access		public
@@ -76,8 +78,9 @@ class File extends \CeusMedia\TemplateEngine\PluginAbstract{
 	 *	@param		array		$elements		Elements assigned to template
 	 *	@return		string
 	 */
-	public function work( $template, &$elements ){
-		if( empty( $this->options['path'] ) )
+	public function work( string $template, array &$elements ): string
+	{
+		if( !isset( $this->options['path'] ) )
 			throw new \RuntimeException( 'No path set' );
 		$matches	= array();
 		$pattern	= '/<(\?)?%'.$this->keyword.'\((.+)\)(\|.+)?%>/U';
@@ -88,16 +91,16 @@ class File extends \CeusMedia\TemplateEngine\PluginAbstract{
 		for( $i=0; $i<count( $matches[0] ); $i++ ){
 			try{
 				$hash		= 'STE'.uniqid();														//  create unique hash value
-				$content	= \File_Reader::load( $this->getFileNameFromKey( $matches[2][$i] ) );	//  load file content
+				$content	= \FS_File_Reader::load( $this->getFileNameFromKey( $matches[2][$i] ) );	//  load file content
 				$content	= preg_replace( '/<%(.+)%>/U', '&lt;%$1%&gt;', $content );				//  escape tags in content
 				$elements[$hash]	= $content;														//  store file content in elements by its hash value as new template tag
-				$value		= '<%?'.$hash.$matches[3][$i].'%>';										//  replacement for tag is a hash tag				
+				$value		= '<%?'.$hash.$matches[3][$i].'%>';										//  replacement for tag is a hash tag
 			}
-			catch( Exception $e ){																	//  catch all exceptions
+			catch( \Throwable $e ){																	//  catch all exceptions
 				if( $this->options['mode'] == 'strict' )											//  strict error mode
-					throw new \Exception_IO( 'Invalid file', 0, $matches[2][$i], $e );				//  throw an exception
+					throw new \Exception_IO( 'Invalid file', 0, /*$e, */$matches[2][$i] );			//  throw an exception
 				else if( $this->options['mode'] == 'verbose' )										//  verbose error mode
-					$value	= 'Missing file: '.$matches[2][$i];										//  
+					$value	= 'Missing file: '.$matches[2][$i];										//
 				else
 					$value	= '';
 			}
@@ -105,7 +108,7 @@ class File extends \CeusMedia\TemplateEngine\PluginAbstract{
 		}
 		return $template;
 	}
-	
+
 	/**
 	 *	Returnes the file name by its key,
 	 *	This method is meant to be overriden for different behaviour.
@@ -118,4 +121,3 @@ class File extends \CeusMedia\TemplateEngine\PluginAbstract{
 		return $this->options['path'].$key;
 	}
 }
-?>

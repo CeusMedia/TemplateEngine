@@ -1,6 +1,6 @@
 <?php
 /**
- *	
+ *
  *
  *	Copyright (c) 2011 Christian Würker (ceusmedia.de)
  *
@@ -25,8 +25,9 @@
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 namespace CeusMedia\TemplateEngine\Plugin;
+
 /**
- *	
+ *
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
@@ -34,8 +35,8 @@ namespace CeusMedia\TemplateEngine\Plugin;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-class Inclusion extends \CeusMedia\TemplateEngine\PluginAbstract{
-
+class Inclusion extends \CeusMedia\TemplateEngine\PluginAbstract
+{
 	/**	@var		string		$keyword		Plugin keyword */
 	protected $keyword			= 'include';
 
@@ -49,7 +50,8 @@ class Inclusion extends \CeusMedia\TemplateEngine\PluginAbstract{
 	 *	@param		array		$elements		Reference to elements assigned to template
 	 *	@return		string
 	 */
-	public function work( $template, &$elements ){
+	public function work( string $template, array &$elements ): string
+	{
 		$matches	= array();
 		$pattern	= '/<(\?)?%'.$this->keyword.'\((.+)\)(\|.+)?%>/U';
 		preg_match_all( $pattern, $template, $matches );
@@ -67,4 +69,3 @@ class Inclusion extends \CeusMedia\TemplateEngine\PluginAbstract{
 		return $template;
 	}
 }
-?>

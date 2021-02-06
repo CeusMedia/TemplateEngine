@@ -26,6 +26,7 @@
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 namespace CeusMedia\TemplateEngine;
+
 /**
  *	Interface for template engine filters.
  *	@category		Library
@@ -36,8 +37,8 @@ namespace CeusMedia\TemplateEngine;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-interface FilterInterface{
-
+interface FilterInterface
+{
 	/**
 	 *	Constructor.
 	 *	Sets options.
@@ -45,31 +46,30 @@ interface FilterInterface{
 	 *	@param		array		$options		Filter options to set above default filter options
 	 *	@return		void
 	 */
-	public function __construct( $options = NULL );
+	public function __construct( array $options = array() );
 
 	/**
 	 *	Apply filter to content.
 	 *	@access		public
 	 *	@param		string		$content		Content to apply filter on
-	 *	@param		string		$arguments		Arguments for filter
+	 *	@param		array		$arguments		Arguments for filter
 	 *	@return		string
 	 */
-	public function apply( $content, $arguments = array() );
+	public function apply( string $content, array $arguments = array() ): string;
 
 	/**
 	 *	Returns a list of keywords of this filter.
 	 *	@access		public
 	 *	@return		array
 	 */
-	public function getKeywords();
+	public function getKeywords(): array;
 
 	/**
 	 *	Sets keywords for this filter.
 	 *	@access		public
 	 *	@param		array		$keywords		List of filter keywords
 	 *	@param		boolean		$append			Flag: append keywords, otherwise replace
-	 *	@return		void
+	 *	@return		FilterAbstract
 	 */
-	public function setKeywords( $keywords, $append = FALSE );
+	public function setKeywords( array $keywords, bool $append = FALSE ): FilterAbstract;
 }
-?>

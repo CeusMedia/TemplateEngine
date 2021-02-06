@@ -1,6 +1,6 @@
 <?php
 /**
- *	
+ *
  *
  *	Copyright (c) 2011 Christian Würker (ceusmedia.de)
  *
@@ -25,8 +25,9 @@
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 namespace CeusMedia\TemplateEngine\Plugin;
+
 /**
- *	
+ *
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
@@ -34,13 +35,13 @@ namespace CeusMedia\TemplateEngine\Plugin;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-class Comments extends \CeusMedia\TemplateEngine\PluginAbstract{
-	
+class Comments extends \CeusMedia\TemplateEngine\PluginAbstract
+{
 	/**	@var		array		$options		Plugin options */
 	protected $options	= array(
 		'remove'	=> false,
 	);
-	
+
 	/**	@var		string		$type			Plugin type (pre|post) */
 	protected $type		= 'post';
 
@@ -51,11 +52,11 @@ class Comments extends \CeusMedia\TemplateEngine\PluginAbstract{
 	 *	@param		array		$elements		Reference to elements assigned to template
 	 *	@return		string
 	 */
-	public function work( $template, &$elements ){
- 		$template	= preg_replace( '/<%--.*--%>/sU', '', $template );								//  remove template engine style comments
- 		if( $this->options['remove'] )																//  HTML comments should be removed
-			$template	= preg_replace( '/<!--.+-->/sU', '', $template );							//  find and remove all HTML comments 
+	public function work( string $template, array &$elements ): string
+	{
+ 		$template	= (string) preg_replace( '/<%--.*--%>/sU', '', $template );						//  remove template engine style comments
+ 		if( isset( $this->options['remove'] ) && (bool) $this->options['remove'] )					//  HTML comments should be removed
+			$template	= (string) preg_replace( '/<!--.+-->/sU', '', $template );					//  find and remove all HTML comments
 		return $template;
 	}
 }
-?>

@@ -26,6 +26,7 @@
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 namespace CeusMedia\TemplateEngine;
+
 /**
  *
  *	@category		Library
@@ -36,8 +37,8 @@ namespace CeusMedia\TemplateEngine;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-interface PluginInterface{
-
+interface PluginInterface
+{
 	/**
 	 *	Constructor.
 	 *	Sets options.
@@ -45,7 +46,7 @@ interface PluginInterface{
 	 *	@param		array		$options		Plugin options to set above default plugin options
 	 *	@return		void
 	 */
-	public function __construct( $options = NULL );
+	public function __construct( array $options = array() );
 
 	/**
 	 *	Apply plugin to template content.
@@ -54,34 +55,33 @@ interface PluginInterface{
 	 *	@param		array		$elements		Reference to elements assigned to template
 	 *	@return		string
 	 */
-	public function work( $template, &$elements );
+	public function work( string $template, array &$elements ): string;
 
 	/**
 	 *	Returns the keyword of this plugin instance.
 	 *	@access		public
 	 *	@return		string
 	 */
-	public function getKeyword();
+	public function getKeyword(): string;
 
 	/**
 	 *	Returns the options map of this plugin instance.
 	 *	@access		public
 	 *	@return		array
 	 */
-	public function getOptions();
+	public function getOptions(): array;
 
 	/**
 	 *	Returns the run order priority of this plugin instance.
 	 *	@access		public
 	 *	@return		integer
 	 */
-	public function getPriority();
+	public function getPriority(): int;
 
 	/**
 	 *	Returns the type (pre|post) of this plugin instance.
 	 *	@access		public
 	 *	@return		string
 	 */
-	public function getType();
+	public function getType(): string;
 }
-?>

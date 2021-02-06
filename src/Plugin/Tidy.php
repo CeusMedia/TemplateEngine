@@ -1,6 +1,6 @@
 <?php
 /**
- *	
+ *
  *
  *	Copyright (c) 2011 Christian Würker (ceusmedia.de)
  *
@@ -25,8 +25,9 @@
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 namespace CeusMedia\TemplateEngine\Plugin;
+
 /**
- *	
+ *
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
@@ -34,54 +35,54 @@ namespace CeusMedia\TemplateEngine\Plugin;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-class Tidy extends \CeusMedia\TemplateEngine\PluginAbstract{
-	
+class Tidy extends \CeusMedia\TemplateEngine\PluginAbstract
+{
 	/**	@var		array		$options		Plugin options */
 	protected $options			= array(
-        'show-body-only'				=> true,
-        'clean'							=> true,
-        'char-encoding'					=> 'utf8',
-        'output-html'					=> false,
-        'output-xml'					=> false,
-        'output-xhtml'					=> true,
-        'numeric-entities'				=> true,
-        'ascii-chars'					=> false,
-        'doctype'						=> 'strict',
-        'bare'							=> true,
-        'fix-uri'						=> true,
-        'indent'						=> true,
-        'indent-spaces'					=> 2,
-        'tab-size'						=> 4,
-        'wrap-attributes'				=> true,
-        'wrap'							=> 0,
-        'indent-attributes'				=> false,
-        'join-classes'					=> false,
-        'join-styles'					=> false,
-        'enclose-block-text'			=> true,
-        'fix-bad-comments'				=> true,
-        'fix-backslash'					=> true,
-        'replace-color'					=> false,
-        'wrap-jste'						=> false,
-        'wrap-php'						=> false,
-        'write-back'					=> true,
-        'drop-proprietary-attributes'	=> false,
-        'hide-comments'					=> true,
-        'hide-endtags'					=> false,
-        'literal-attributes'			=> false,
-        'drop-empty-paras'				=> true,
-        'enclose-text'					=> true,
-        'quote-ampersand'				=> true,
-        'quote-marks'					=> false,
-        'quote-nbsp'					=> true,
-        'vertical-space'				=> false,
-        'wrap-script-literals'			=> false,
-        'tidy-mark'						=> true,
-        'merge-divs'					=> false,
-        'repeated-attributes'			=> 'keep-last',
-        'break-before-br'				=> true,
+		'show-body-only'				=> true,
+		'clean'							=> true,
+		'char-encoding'					=> 'utf8',
+		'output-html'					=> false,
+		'output-xml'					=> false,
+		'output-xhtml'					=> true,
+		'numeric-entities'				=> true,
+		'ascii-chars'					=> false,
+		'doctype'						=> 'strict',
+		'bare'							=> true,
+		'fix-uri'						=> true,
+		'indent'						=> true,
+		'indent-spaces'					=> 2,
+		'tab-size'						=> 4,
+		'wrap-attributes'				=> true,
+		'wrap'							=> 0,
+		'indent-attributes'				=> false,
+		'join-classes'					=> false,
+		'join-styles'					=> false,
+		'enclose-block-text'			=> true,
+		'fix-bad-comments'				=> true,
+		'fix-backslash'					=> true,
+		'replace-color'					=> false,
+		'wrap-jste'						=> false,
+		'wrap-php'						=> false,
+		'write-back'					=> true,
+		'drop-proprietary-attributes'	=> false,
+		'hide-comments'					=> true,
+		'hide-endtags'					=> false,
+		'literal-attributes'			=> false,
+		'drop-empty-paras'				=> true,
+		'enclose-text'					=> true,
+		'quote-ampersand'				=> true,
+		'quote-marks'					=> false,
+		'quote-nbsp'					=> true,
+		'vertical-space'				=> false,
+		'wrap-script-literals'			=> false,
+		'tidy-mark'						=> true,
+		'merge-divs'					=> false,
+		'repeated-attributes'			=> 'keep-last',
+		'break-before-br'				=> true,
 	);
 
-	/**	@var		string		$priority		Plugin priority: 1(highest) - 9(lowest) */
+	/**	@var		integer		$priority		Plugin priority: 1(highest) - 9(lowest) */
 	protected $priority			= 9;
 
 	/**	@var		string		$type			Plugin type (pre|post) */
@@ -94,7 +95,8 @@ class Tidy extends \CeusMedia\TemplateEngine\PluginAbstract{
 	 *	@param		array		$elements		Reference to elements assigned to template
 	 *	@return		string
 	 */
-	public function work( $template, &$elements ){
+	public function work( string $template, array &$elements ): string
+	{
 		if( !extension_loaded( 'tidy' ) )
 			throw new \RuntimeException( 'tidy extension not loaded' );
     	$tidy = new \tidy;
@@ -104,4 +106,3 @@ class Tidy extends \CeusMedia\TemplateEngine\PluginAbstract{
 		return $template;
 	}
 }
-?>

@@ -1,6 +1,6 @@
 <?php
 /**
- *	
+ *
  *
  *	Copyright (c) 2011 Christian Würker (ceusmedia.de)
  *
@@ -25,8 +25,9 @@
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 namespace CeusMedia\TemplateEngine\Plugin;
+
 /**
- *	
+ *
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
@@ -34,8 +35,8 @@ namespace CeusMedia\TemplateEngine\Plugin;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-class Optional extends \CeusMedia\TemplateEngine\PluginAbstract{
-	
+class Optional extends \CeusMedia\TemplateEngine\PluginAbstract
+{
 	/**	@var		array		$options		Plugin options */
 	protected $options			= array(
 		'remove'	=> false
@@ -43,7 +44,7 @@ class Optional extends \CeusMedia\TemplateEngine\PluginAbstract{
 
 	/**	@var		string		$type			Plugin type (pre|post) */
 	protected $type				= 'pre';
-	
+
 	/**
 	 *	Apply plugin to template content.
 	 *	@access		public
@@ -51,10 +52,10 @@ class Optional extends \CeusMedia\TemplateEngine\PluginAbstract{
 	 *	@param		array		$elements		Reference to elements assigned to template
 	 *	@return		string
 	 */
-	public function work( $template, &$elements ){
+	public function work( string $template, array &$elements ): string
+	{
  		if( $this->options['remove'] )																//  optional parts should be removed
-			return preg_replace( '/<%\?--.+--%>/sU', '', $template );								//  find and remove optional parts
-		return preg_replace( '/<%\?--(.+)--%>/sU', '\\1', $template );								//  otherwise find, remove markup but keep content
+			return (string) preg_replace( '/<%\?--.+--%>/sU', '', $template );						//  find and remove optional parts
+		return (string) preg_replace( '/<%\?--(.+)--%>/sU', '\\1', $template );						//  otherwise find, remove markup but keep content
 	}
 }
-?>

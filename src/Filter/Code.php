@@ -25,6 +25,7 @@
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 namespace CeusMedia\TemplateEngine\Filter;
+
 /**
  *	Filter to display code of several languages in several ways.
  *	@category		Library
@@ -34,8 +35,8 @@ namespace CeusMedia\TemplateEngine\Filter;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-class Code extends \CeusMedia\TemplateEngine\FilterAbstract{
-
+class Code extends \CeusMedia\TemplateEngine\FilterAbstract
+{
 	/**	@var		array		$keywords		Keywords to bind filter to on register */
 	protected $keywords	= array( 'code' );
 
@@ -43,10 +44,11 @@ class Code extends \CeusMedia\TemplateEngine\FilterAbstract{
 	 *	Apply filter to content.
 	 *	@access		public
 	 *	@param		string		$content		Content to apply filter on
-	 *	@param		string		$arguments		Arguments for filter
+	 *	@param		array		$arguments		Arguments for filter
 	 *	@return		string
 	 */
-	public function apply( $content, $arguments = array()){
+	public function apply( string $content, array $arguments = array()): string
+	{
 		$format		= array_shift( $arguments );
 		$language	= array_shift( $arguments );													//  get language from first argument
 		switch( $format ){
@@ -68,4 +70,3 @@ class Code extends \CeusMedia\TemplateEngine\FilterAbstract{
 		return $content;
 	}
 }
-?>

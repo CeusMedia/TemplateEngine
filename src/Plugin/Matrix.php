@@ -1,6 +1,6 @@
 <?php
 /**
- *	
+ *
  *
  *	Copyright (c) 2011 Christian Würker (ceusmedia.de)
  *
@@ -25,8 +25,9 @@
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 namespace CeusMedia\TemplateEngine\Plugin;
+
 /**
- *	
+ *
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
@@ -34,11 +35,11 @@ namespace CeusMedia\TemplateEngine\Plugin;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-class Matrix extends \CeusMedia\TemplateEngine\PluginAbstract{
-
+class Matrix extends \CeusMedia\TemplateEngine\PluginAbstract
+{
 	/**	@var		string		$keyword		Plugin keyword */
 	protected $keyword			= 'matrix';
-	
+
 	/**	@var		array		$options		Plugin options */
 	protected $options			= array(
 		'depth'		=> '1',
@@ -56,19 +57,21 @@ class Matrix extends \CeusMedia\TemplateEngine\PluginAbstract{
 	 *	@access		public
 	 *	@param		array		$options		Plugin options to set above default plugin options
 	 *	@return		void
+	 *	@throws		\Exception					if options do not contain data of matrix
 	 */
-	public function __construct( $options = NULL ){
+	public function __construct( array $options = array() )
+	{
 		if( isset( $options['keyword'] ) ){
 			$this->keyword	= $options['keyword'];
 			unset( $options['keyword'] );
 		}
 		if( isset( $options['data'] ) && is_array( $options['data'] ) )
 			$this->options['data']	=& $options['data'];
-		if( empty( $this->options['data'] ) )
-			throw new Exception( 'No matrix data provided' );
+		if( !isset( $this->options['data'] ) )
+			throw new \Exception( 'No matrix data provided' );
 		parent::__construct( $options );
 	}
-	
+
 	/**
 	 *	Apply plugin to template content.
 	 *	@access		public
@@ -76,7 +79,8 @@ class Matrix extends \CeusMedia\TemplateEngine\PluginAbstract{
 	 *	@param		array		$elements		Reference to elements assigned to template
 	 *	@return		string
 	 */
-	public function work( $template, &$elements ){
+	public function work( string $template, array &$elements ): string
+	{
 		$matches	= array();
 		$pattern	= '/<(\?)?%'.$this->keyword.'\((.+)\)%>/U';
 		preg_match_all( $pattern, $template, $matches );
@@ -90,13 +94,14 @@ class Matrix extends \CeusMedia\TemplateEngine\PluginAbstract{
 	}
 
 	/**
-	 *	Tries to get a value by matrix. 
+	 *	Tries to get a value by matrix.
 	 *	@access		public
 	 *	@param		string		$key		Matrix key
 	 *	@param		mixed		$value		Reference to value for matrix key (if existing)
 	 *	@return		boolean
 	 */
-	protected function extractValue( $key, &$value ){
+	protected function extractValue( string $key, &$value )
+	{
 		$depth	= $this->options['depth'];
 		$parts	= explode( $this->options['delimiter'], $key );
 		if( count( $parts ) != $depth )
@@ -117,6 +122,4 @@ class Matrix extends \CeusMedia\TemplateEngine\PluginAbstract{
 		$value	= $data;
 		return TRUE;
 	}
-
 }
-?>

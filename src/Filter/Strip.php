@@ -25,6 +25,7 @@
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 namespace CeusMedia\TemplateEngine\Filter;
+
 /**
  *	Filter to strip tags etc.
  *	@category		Library
@@ -34,20 +35,20 @@ namespace CeusMedia\TemplateEngine\Filter;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-class Strip extends \CeusMedia\TemplateEngine\FilterAbstract{
-
+class Strip extends \CeusMedia\TemplateEngine\FilterAbstract
+{
 	/**	@var		array		$keywords		Keywords to bind filter to on register */
 	protected $keywords	= array( 'strip' );
 
-	
 	/**
 	 *	Apply filter to content.
 	 *	@access		public
 	 *	@param		string		$content		Content to apply filter on
-	 *	@param		string		$arguments		Arguments for filter, a list of: tags | space | comments | styles | scripts
+	 *	@param		array		$arguments		Arguments for filter, a list of: tags | space | comments | styles | scripts
 	 *	@return		string
 	 */
-	public function apply( $content, $arguments = array() ){
+	public function apply( string $content, array $arguments = array() ): string
+	{
 		foreach( $arguments as $type ){
 			switch( $type ){
 				case 'tags':
@@ -70,4 +71,3 @@ class Strip extends \CeusMedia\TemplateEngine\FilterAbstract{
 		return $content;
 	}
 }
-?>

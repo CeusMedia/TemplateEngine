@@ -26,6 +26,7 @@
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 namespace CeusMedia\TemplateEngine;
+
 /**
  *	Abstraction for plugins.
  *	@category		Library
@@ -36,16 +37,16 @@ namespace CeusMedia\TemplateEngine;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-abstract class PluginAbstract implements \CeusMedia\TemplateEngine\PluginInterface{
-
+abstract class PluginAbstract implements PluginInterface
+{
 	/**	@var		string		$keyword		Plugin keyword */
-	protected $keyword			= NULL;
+	protected $keyword			= '';
 
 	/**	@var		array		$options		Plugin options */
-	protected $options = array();
+	protected $options			= array();
 
-	/**	@var		string		$priority		Plugin priority: 1(highest) - 9(lowest) */
-	protected $priority			= '5';
+	/**	@var		integer		$priority		Plugin priority: 1(highest) - 9(lowest) */
+	protected $priority			= 5;
 
 	/**	@var		string		$type			Plugin type (pre|post) */
 	protected $type				= 'pre';
@@ -57,10 +58,12 @@ abstract class PluginAbstract implements \CeusMedia\TemplateEngine\PluginInterfa
 	 *	@param		array		$options		Plugin options to set above default plugin options
 	 *	@return		void
 	 */
-	public function __construct( $options = NULL ){
-		if( $options && is_array( $options ) )
-			foreach( $options as $key => $value )
-				$this->options[$key]	= $value;
+	public function __construct( array $options = array() )
+	{
+		foreach( $options as $key => $value )
+			$this->options[$key]	= $value;
+		if( strlen( trim( $this->keyword ) ) === 0 )
+			throw new \DomainException( 'Plugin class "'.get_class( $this ).'" does not set an unique plugin key' );
 	}
 
 	/**
@@ -68,7 +71,8 @@ abstract class PluginAbstract implements \CeusMedia\TemplateEngine\PluginInterfa
 	 *	@access		public
 	 *	@return		string
 	 */
-	public function getKeyword(){
+	public function getKeyword(): string
+	{
 		return $this->keyword;
 	}
 
@@ -77,7 +81,8 @@ abstract class PluginAbstract implements \CeusMedia\TemplateEngine\PluginInterfa
 	 *	@access		public
 	 *	@return		array
 	 */
-	public function getOptions(){
+	public function getOptions(): array
+	{
 		return $this->options;
 	}
 
@@ -86,7 +91,8 @@ abstract class PluginAbstract implements \CeusMedia\TemplateEngine\PluginInterfa
 	 *	@access		public
 	 *	@return		integer
 	 */
-	public function getPriority(){
+	public function getPriority(): int
+	{
 		return $this->priority;
 	}
 
@@ -95,8 +101,8 @@ abstract class PluginAbstract implements \CeusMedia\TemplateEngine\PluginInterfa
 	 *	@access		public
 	 *	@return		string
 	 */
-	public function getType(){
+	public function getType(): string
+	{
 		return $this->type;
 	}
 }
-?>

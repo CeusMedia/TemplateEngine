@@ -26,6 +26,7 @@
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 namespace CeusMedia\TemplateEngine;
+
 /**
  *	Abstraction for template engine filters.
  *	@category		Library
@@ -36,8 +37,8 @@ namespace CeusMedia\TemplateEngine;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-abstract class FilterAbstract implements \CeusMedia\TemplateEngine\FilterInterface{
-
+abstract class FilterAbstract implements \CeusMedia\TemplateEngine\FilterInterface
+{
 	/**	@var		array		$keywords		Keywords to bind filter to on register */
 	protected $keywords	= array();
 
@@ -51,10 +52,10 @@ abstract class FilterAbstract implements \CeusMedia\TemplateEngine\FilterInterfa
 	 *	@param		array		$options		Filter options to set above default filter options
 	 *	@return		void
 	 */
-	public function __construct( $options = NULL ){
-		if( $options && is_array( $options ) )
-			foreach( $options as $key => $value )
-				$this->options[$key]	= $value;
+	public function __construct( array $options = array() )
+	{
+		foreach( $options as $key => $value )
+			$this->options[$key]	= $value;
 	}
 
 	/**
@@ -62,7 +63,8 @@ abstract class FilterAbstract implements \CeusMedia\TemplateEngine\FilterInterfa
 	 *	@access		public
 	 *	@return		array
 	 */
-	public function getKeywords(){
+	public function getKeywords(): array
+	{
 		return $this->keywords;
 	}
 
@@ -71,16 +73,16 @@ abstract class FilterAbstract implements \CeusMedia\TemplateEngine\FilterInterfa
 	 *	@access		public
 	 *	@param		array		$keywords		List of filter keywords
 	 *	@param		boolean		$append			Flag: append keywords, otherwise replace
-	 *	@return		void
+	 *	@return		FilterAbstract
 	 */
-	public function setKeywords( $keywords, $append = FALSE ){
-		if( !is_array( $keywords ) )
-			throw new \InvalidArgumentException( 'Keywords must be of array' );
-		if( $append )
+	public function setKeywords( array $keywords, bool $append = FALSE ): FilterAbstract
+	{
+		if( $append ){
 			foreach( $keywords as $keyword )
 				$this->keywords[]	= $keyword;
+		}
 		else
 			$this->keywords	= $keywords;
+		return $this;
 	}
 }
-?>
