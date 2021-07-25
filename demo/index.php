@@ -1,8 +1,10 @@
 <?php
 (@include '../vendor/autoload.php') or die('Please use composer to install required packages.');
 
-use CeusMedia\TemplateEngine as T;
 use CeusMedia\TemplateEngine\Template;
+
+error_reporting( E_ALL );
+ini_set( 'display_errors', TRUE );
 
 $date		= date( 'Y-m-d' );
 $time		= date( 'H:i:s' );
@@ -17,7 +19,7 @@ try{
 
 	print '<h4>Template content</h4>';
 	print 'Presume having this template code stored in <code>template.date.tmpl</code>:';
-	print '<pre>'.htmlentities( $template1->getTemplate() ).'</pre>';
+	print '<pre class="code-php">'.htmlentities( $template1->getTemplate() ).'</pre>';
 
 	print '<h4>PHP code</h4>';
 	print 'After loading the template engine with:';
@@ -32,7 +34,7 @@ try{
 	print '<pre>'.htmlentities( $output1 ).'</pre>';
 	print '<h4>PHP code in long and explained</h4>';
 	print '<pre>$template  = new Template();				// create template instance
-$template->setTemplate( \'template.date.tmpl\' );	// load template from file "template.tmpl"
+$template->setTemplate( \'template.date.tmpl\' );		// load template from file "template.tmpl"
 $template->addElement( \'date\', $date );			// assign data element to template
 print $template->render();				// render template and print it out
 </pre>';
@@ -49,7 +51,7 @@ print $template->render();				// render template and print it out
 	print 'Presume having this template code stored in <code>template.page.html</code>:';
 	print '<pre>'.htmlentities( $template2->getTemplate() ).'</pre>';
 	print 'And having some data to assign, like:';
-	print '<pre>$data = array(
+	print '<pre class="code-php">$data = array(
 	\'data\'	=> date( \'Y-m-d\' ),
 	\'time\'	=> date( \'H:i:s\' )
 );</pre>';
@@ -67,14 +69,38 @@ catch( Exception $e ){
 }
 
 $body	= '<div class="container">
+<script src="https://pagecdn.io/lib/ace/1.4.12/ace.min.js" crossorigin="anonymous" integrity="sha256-T5QdmsCQO5z8tBAXMrCZ4f3RX8wVdiA0Fu17FGnU1vU=" ></script>
 <h1 class="muted">CeusMedia Component Demo</h1>
 <h2>TemplateEngine</h2>
 '.ob_get_clean().'
-</div>';
+</div>
+<style type="text/css" media="screen">
+.code-php {}
+</style>
+<script>
+jQuery("######pre.code-php").each(function(){
+	console.log(this);
+	var editor = ace.edit($(this).get(0));
+	editor.setTheme("ace/theme/monokai");
+    editor.session.setMode("ace/mode/javascript");
+	editor.setTheme("ace/theme/github");
 
-$page	= new UI_HTML_PageFrame();
-$page->addStylesheet( "http://cdn.int1a.net/css/bootstrap.min.css" );
-$page->addJavaScript( "http://cdn.int1a.net/js/jquery/1.10.2.min.js" );
-$page->addJavaScript( "http://cdn.int1a.net/js/bootstrap.min.js" );
+	editor.session.setMode("ace/mode/php");
+});
+</script>';
+
+$page	= new UI_HTML_PageFrame( 'HTML_5' );
+$page->addStylesheet( "https://cdn.ceusmedia.de/css/bootstrap.min.css" );
+$page->addJavaScript( "https://cdn.ceusmedia.de/js/bootstrap.min.js" );
+$page->addJavaScript( "https://cdn.ceusmedia.de/js/jquery/1.10.2.min.js" );
+
+/*
+$page->addJavaScript( 'https://cdnjs.cloudflare.com/ajax/libs/ace/1.3.0/ace.js' );
+$page->addJavaScript( 'https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.min.js' );
+$page->addJavaScript( 'https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/mode-html.min.js' );
+$page->addJavaScript( 'https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/mode-php.min.js' );
+$page->addJavaScript( 'https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/theme-github.min.js' );
+*/
+
 $page->addBody( $body );
 print $page->build();
