@@ -13,10 +13,11 @@
   ],
   "support": {
     "email": "office@ceusmedia.de",
-    "jabber": "ceus-media@jabber.org"
+    "jabber": "cwuerker@ceusmedia.de"
   },
+  "minimum-stability": "dev",
   "require": {
-    "php": ">=7.3",
+    "php": "^7.3 | ^8",
     "ceus-media/common": ">=0.8.1",
     "ceus-media/cache": "*"
   },
@@ -27,7 +28,7 @@
   },
   "autoload": {
     "psr-4": {
-        "CeusMedia\\TemplateEngine\\": ["src/"]
+      "CeusMedia\\TemplateEngine\\": ["src/"]
     }
   }
 }
