@@ -180,7 +180,8 @@ class Template
 	{
 		$template				= new self();
 		$template->template		= $string;
-		$template->fileName		= $fileName;
+		if( NULL !== $fileName )
+			$template->fileName		= $fileName;
 		$template->add( $elements );
 		return $template->render();
 	}
@@ -207,7 +208,7 @@ class Template
 	 */
 	public static function setTemplatePath( string $path )
 	{
-		self::$pathTemplates	= preg_replace( "@(.+)/$@", "\\1/", $path );
+		self::$pathTemplates	= (string) preg_replace( "@(.+)/$@", "\\1/", $path );
 	}
 
 	/**
@@ -353,13 +354,13 @@ class Template
 	 *	@access		public
 	 *	@param		string		$tag		tagname
 	 *	@param		string		$fileName	template file
-	 *	@param		array		$element	array containing elements {@link add()}
+	 *	@param		array		$elements	array containing elements {@link add()}
 	 *	@param		boolean		$overwrite	if set to TRUE, it will overwrite an existing element with the same label
 	 *	@return		void
 	 */
-	public function addTemplate( string $tag, string $fileName, $element = NULL, bool $overwrite = FALSE )
+	public function addTemplate( string $tag, string $fileName, array $elements = [], bool $overwrite = FALSE )
 	{
-		$this->addElement( $tag, new self( $fileName, $element ), $overwrite );
+		$this->addElement( $tag, new self( $fileName, $elements ), $overwrite );
 	}
 
 	/**
@@ -405,7 +406,7 @@ class Template
 	 */
 	public function getLabels( int $type = 0, bool $xml = TRUE ): array
 	{
- 		$content = preg_replace( '/<%\??--.*--%>/sU', '', $this->template );
+ 		$content = (string) preg_replace( '/<%\??--.*--%>/sU', '', $this->template );
 		switch( $type ){
 			case 2:
 				preg_match_all( '/<%(\?.*)%>/U', $content, $tags );

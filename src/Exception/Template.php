@@ -28,6 +28,7 @@
 namespace CeusMedia\TemplateEngine\Exception;
 
 use RuntimeException;
+use Throwable;
 
 /**
  *	Exception for Templates.
@@ -69,7 +70,7 @@ class Template extends RuntimeException
 	 *	@param		Throwable|NULL	$previous		Parent exception
 	 *	@return		void
 	 */
-	public function __construct( $code, ?string $fileName = NULL, array $data = [], Throwable|NULL $previous = NULL )
+	public function __construct( $code, ?string $fileName = NULL, array $data = [], ?Throwable $previous = NULL )
 	{
 		$this->filePath	= $fileName;
 		$tagList	= '"'.implode( '", "', $data ).'"';
