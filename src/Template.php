@@ -2,7 +2,7 @@
 /**
  *	Template Class.
  *
- *	Copyright (c) 2007-2011 Christian Würker (ceus-media.de)
+ *	Copyright (c) 2007-2021 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine
  *	@author			David Seebacher <dseebacher@gmail.com>
- *	@author			Christian Würker <christian.wuerker@ceus-media.de>
- *	@copyright		2007-2015 Christian Würker
+ *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
+ *	@copyright		2007-2021 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
@@ -30,9 +30,11 @@ namespace CeusMedia\TemplateEngine;
 use CeusMedia\Cache\AdapterInterface as CacheAdapterInterface;
 use CeusMedia\TemplateEngine\Exception\Template as TemplateException;
 use CeusMedia\TemplateEngine\Plugin\Matrix as MatrixPlugin;
+use Alg_Object_MethodFactory as MethodFactory;
 use InvalidArgumentException;
 use FS_File_Reader as FileReader;
 use Alg_Object_Factory as ObjectFactory;
+use ReflectionObject;
 use RuntimeException;
 
 use function method_exists;
@@ -42,24 +44,18 @@ use function method_exists;
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine
  *	@author			David Seebacher <dseebacher@gmail.com>
- *	@author			Christian Würker <christian.wuerker@ceus-media.de>
- *	@copyright		2007-2015 Christian Würker
+ *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
+ *	@copyright		2007-2021 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 class Template
 {
-	/**	@var		string		$className		Name of template class */
-	protected $className;
+	/**	@var		array		$plugins		List of template plugin instances */
+	public static $plugins		= [];
 
-	/**	@var		array		$elements		the first dimension holds all added labels, the second dimension holds elements for each label */
-	protected $elements;
-
-	/**	@var		string		$fileName		Filename of a specified template file */
-	protected $fileName;
-
-	/**	@var		string		$template		Content of a specified template file */
-	protected $template;
+	/**	@var		array		$filters		List of template filter instances */
+	public static $filters		= [];
 
 	/**	@var		CacheAdapterInterface|NULL	$cache		Storage instance to be used for caching */
 	protected static $cache		= NULL;
@@ -73,14 +69,60 @@ class Template
 	/**	@var		array		$loaded			List of loaded templates, used to avoid to load templates to often */
 	protected static $loaded		= [];
 
+	/**	@var		string		$className		Name of template class */
+	protected $className;
+
+	/**	@var		array		$elements		the first dimension holds all added labels, the second dimension holds elements for each label */
+	protected $elements;
+
+	/**	@var		string		$fileName		Filename of a specified template file */
+	protected $fileName;
+
+	/**	@var		string		$template		Content of a specified template file */
+	protected $template;
+
 	/**	@var		string		$tmp			... */
 	protected $tmp;
 
-	/**	@var		array		$plugins		List of template plugin instances */
-	public static $plugins		= [];
+	/**
+	 *	Registers a filter instance, which can be applied to all template tags.
+	 *	If no keywords are given the filter's default keywords are registered.
+	 *	You can use 'registerFilter' to avoid building an instance.
+	 *	@access		public
+	 *	@param		FilterInterface	$filter		Instance of filter
+	 *	@param		array			$keywords	List of keywords to bind filter on
+	 *	@return		void
+	 */
+	public static function addFilter( FilterInterface $filter, array $keywords = [] )
+	{
+		if( !$keywords )
+			$keywords	= $filter->getKeywords();
+		foreach( $keywords as $keyword ){
+			if( array_key_exists( $keyword, self::$filters ) )
+				throw new RuntimeException( 'Filter keyword "'.$keyword.'" is already taken by another filter' );
+			self::$filters[$keyword]	= $filter;
+		}
+	}
 
-	/**	@var		array		$filters		List of template filter instances */
-	public static $filters		= [];
+	/**
+	 *	Registers a plugin instance, which can be applied to all template tags.
+	 *	@access		public
+	 *	@param		PluginInterface	$plugin		Instance of filter
+	 *	@return		void
+	 */
+	public static function addPlugin( PluginInterface $plugin )
+	{
+		$keyword	= $plugin->getKeyword();
+		$priority	= $plugin->getPriority();
+		foreach( self::$plugins as $pluginsPriority => $plugins )
+			foreach( $plugins as $pluginInstance )
+				if( $pluginInstance instanceof MatrixPlugin )
+					if( $pluginInstance->getKeyword() == $keyword )
+						throw new RuntimeException( 'Plugin keyword "'.$keyword.'" is already taken by another plugin' );
+		if( !isset( self::$plugins[$priority] ) )
+			self::$plugins[$priority]	= [];
+		self::$plugins[$priority][]	= $plugin;
+	}
 
 	/**
 	 *	...
@@ -91,6 +133,81 @@ class Template
 	public static function getTemplatePath(): string
 	{
 		return self::$pathTemplates;
+	}
+
+	/**
+	 *	Registers a filter, which can be applied to all template tags, by its class name.
+	 *	@access		public
+	 *	@param		string		$className	Name of filter class, implementing CMM_STE_Filter_Interface
+	 *	@param		array		$keywords	List of keywords to bind filter to
+	 *	@return		void
+	 */
+	public static function registerFilter( string $className, array $keywords )
+	{
+		if( 0 === count( $keywords ) )
+			throw new InvalidArgumentException( 'No filter keywords given' );
+		foreach( $keywords as $keyword ){
+			if( array_key_exists( $keyword, self::$filters ) )
+				throw new RuntimeException( 'Filter keyword "'.$keyword.'" is already taken by another filter' );
+			self::$filters[$keyword]	= $className;
+		}
+	}
+
+	/**
+	 *	Renders a template file with given elements statically.
+	 *	@access		public
+	 *	@static
+	 *	@param		string		$fileName		File Name of Template File
+	 *	@param		array		$elements		List of Elements {@link add()}
+	 *	@return		string
+	 */
+	public static function renderFile( string $fileName, array $elements = [] ): string
+	{
+		$template	= new self( $fileName, $elements );
+		return $template->render();
+	}
+
+	/**
+	 *	Renders a template string with given elements statically.
+	 *	@access		public
+	 *	@static
+	 *	@param		string		$string			Template String
+	 *	@param		array		$elements		Map of Elements for Template String
+	 *	@param		string		$fileName		File name of the template. Needed in case of error of missing labels
+	 *	@return		string
+	 */
+	public static function renderString( string $string, array $elements = [], string $fileName = NULL )
+	{
+		$template				= new self();
+		$template->template		= $string;
+		$template->fileName		= $fileName;
+		$template->add( $elements );
+		return $template->render();
+	}
+
+	/**
+	 *	Sets storage for caching.
+	 *	@access		public
+	 *	@static
+	 *	@param		CacheAdapterInterface	$storage		Storage instance to be used for caching
+	 *	@param		string						$prefix			Prefix for keys in cache.
+	 *	@return		void
+	 */
+	public static function setCache( CacheAdapterInterface $storage, string $prefix = '' )
+	{
+		self::$cache		= $storage;
+		self::$cachePrefix	= $prefix;
+	}
+
+	/**
+	 *	Sets path to templates.
+	 *	@access		public
+	 *	@param		string		$path		Path to templates
+	 *	@return		void
+	 */
+	public static function setTemplatePath( string $path )
+	{
+		self::$pathTemplates	= preg_replace( "@(.+)/$@", "\\1/", $path );
 	}
 
 	/**
@@ -175,14 +292,14 @@ class Template
 	{
 		$number		= 0;
 		$steps[]	= $name;
-		$reflection	= new \ReflectionObject( $object );
+		$reflection	= new ReflectionObject( $object );
 		foreach( $reflection->getProperties() as $property ){
 			$key		= $property->getName();
 			$methodName	= 'get'.ucfirst( $key );
 			if( $property->isPublic() )
 				$value	= $property->getValue( $object );
 			else if( $reflection->hasMethod( $methodName ) )
-				$value	= \Alg_Object_MethodFactory::callObjectMethod( $object, $methodName );
+				$value	= MethodFactory::callObjectMethod( $object, $methodName );
 			else
 				continue;
 			$label	= implode( ".", $steps ).".".$key;
@@ -232,47 +349,6 @@ class Template
 	}
 
 	/**
-	 *	Registers a filter instance, which can be applied to all template tags.
-	 *	If no keywords are given the filter's default keywords are registered.
-	 *	You can use 'registerFilter' to avoid building an instance.
-	 *	@static
-	 *	@access		public
-	 *	@param		FilterInterface	$filter		Instance of filter
-	 *	@param		array			$keywords	List of keywords to bind filter on
-	 *	@return		void
-	 */
-	public static function addFilter( FilterInterface $filter, array $keywords = [] )
-	{
-		if( !$keywords )
-			$keywords	= $filter->getKeywords();
-		foreach( $keywords as $keyword ){
-			if( array_key_exists( $keyword, self::$filters ) )
-				throw new RuntimeException( 'Filter keyword "'.$keyword.'" is already taken by another filter' );
-			self::$filters[$keyword]	= $filter;
-		}
-	}
-
-	/**
-	 *	Registers a plugin instance, which can be applied to all template tags.
-	 *	@access		public
-	 *	@param		PluginInterface	$plugin		Instance of filter
-	 *	@return		void
-	 */
-	public static function addPlugin( PluginInterface $plugin )
-	{
-		$keyword	= $plugin->getKeyword();
-		$priority	= $plugin->getPriority();
-		foreach( self::$plugins as $pluginsPriority => $plugins )
-			foreach( $plugins as $pluginInstance )
-				if( $pluginInstance instanceof MatrixPlugin )
-					if( $pluginInstance->getKeyword() == $keyword )
-						throw new RuntimeException( 'Plugin keyword "'.$keyword.'" is already taken by another plugin' );
-		if( !isset( self::$plugins[$priority] ) )
-			self::$plugins[$priority]	= [];
-		self::$plugins[$priority][]	= $plugin;
-	}
-
-	/**
 	 *	Adds another Template.
 	 *	@access		public
 	 *	@param		string		$tag		tagname
@@ -284,72 +360,6 @@ class Template
 	public function addTemplate( string $tag, string $fileName, $element = NULL, bool $overwrite = FALSE )
 	{
 		$this->addElement( $tag, new self( $fileName, $element ), $overwrite );
-	}
-
-	/**
-	 *	...
-	 *	@access		protected
-	 *	@param		array		$matches		...
-	 *	@return		string
-	 */
-	protected function applyFilters( array $matches ): string
-	{
-		$filters	= [];
-		if( empty( $matches[3] ) )
-			return $this->tmp;
-		foreach( explode( '|', $matches[3] ) as $filter ){
-			if( trim( $filter ) ){
-				$parts		= explode( ':', trim( $filter ) );
-				$filter		= $parts[0];
-				$arguments	= isset( $parts[1] ) ? explode( ',', $parts[1] ) : [];
-				if( array_key_exists( $filter, self::$filters ) ){
-					if(	is_string( self::$filters[$filter] ) )
-						self::$filters[$filter]	= ObjectFactory::createObject( self::$filters[$filter] );
-					$this->tmp	= self::$filters[$filter]->apply( $this->tmp, $arguments );
-				}
-			}
-		}
-		return $this->tmp;
-	}
-
-	/**
-	 *	Applies registered plugins directly to current template content.
-	 *	@access		protected
-	 *	@param		string		$content		Reference to current template content
-	 *	@param		string		$type			Type of plugins to apply: pre | post
-	 *	@return		string
-	 */
-	protected function applyPlugins( &$content, $type = 'pre' ): string
-	{
-		ksort( self::$plugins );
-		foreach( self::$plugins as $priority => $plugins )											//  iterate plugins priorities
-			foreach( $plugins as $plugin )															//  iterate plugins in priority
-				if( $plugin->getType() == $type )													//  plugin type is matching
-					$content	= $plugin->work( $content, $this->elements );						//  apply plugin on template content
-		return $content;
-	}
-
-	/**
-	 *	Counts loadings of template files and excepts if a file has been loaded too often.
-	 *	@static
-	 *	@access		protected
-	 *	@param		string		$filePath		...
-	 *	@return		void
-	 *	@throws		TemplateException
-	 *	@todo		make limit configurable
-	 */
-	protected static function checkLoadLimit( string $filePath )
-	{
-		if( !in_array( $filePath, self::$loaded ) )													//  file not found in load list
-			self::$loaded[$filePath] = 1;															//  append file to load list
-		else
-			self::$loaded[$filePath]++;																//  count file load
-		if( self::$loaded[$filePath] > 100 ){														//  file loaded 100 times
-			throw new TemplateException(															//  break because limit is reached
-				TemplateException::FILE_LOAD_LIMIT,
-				$filePath
-			);
-		}
 	}
 
 	/**
@@ -433,25 +443,6 @@ class Template
 	}
 
 	/**
-	 *	Registers a filter, which can be applied to all template tags, by its class name.
-	 *	@static
-	 *	@access		public
-	 *	@param		string		$className	Name of filter class, implementing CMM_STE_Filter_Interface
-	 *	@param		array		$keywords	List of keywords to bind filter to
-	 *	@return		void
-	 */
-	public static function registerFilter( string $className, array $keywords )
-	{
-		if( 0 === count( $keywords ) )
-			throw new InvalidArgumentException( 'No filter keywords given' );
-		foreach( $keywords as $keyword ){
-			if( array_key_exists( $keyword, self::$filters ) )
-				throw new RuntimeException( 'Filter keyword "'.$keyword.'" is already taken by another filter' );
-			self::$filters[$keyword]	= $className;
-		}
-	}
-
-	/**
 	 *	Renders output of given template file or string with applied elements, filters and plugins.
 	 *	All labels will be replaced with apropriate elements.
 	 *	All registered plugins will ... (be applied before and after label replacement.
@@ -510,53 +501,6 @@ class Template
 	}
 
 	/**
-	 *	Renders a template file with given elements statically.
-	 *	@access		public
-	 *	@static
-	 *	@param		string		$fileName		File Name of Template File
-	 *	@param		array		$elements		List of Elements {@link add()}
-	 *	@return		string
-	 */
-	public static function renderFile( string $fileName, array $elements = [] ): string
-	{
-		$template	= new self( $fileName, $elements );
-		return $template->render();
-	}
-
-	/**
-	 *	Renders a template string with given elements statically.
-	 *	@access		public
-	 *	@static
-	 *	@param		string		$string			Template String
-	 *	@param		array		$elements		Map of Elements for Template String
-	 *	@param		string		$fileName		File name of the template. Needed in case of error of missing labels
-	 *	@return		string
-	 */
-	public static function renderString( string $string, array $elements = [], string $fileName = NULL )
-	{
-		$template				= new self();
-		$template->template		= $string;
-		if( NULL !== $fileName )
-			$template->fileName		= $fileName;
-		$template->add( $elements );
-		return $template->render();
-	}
-
-	/**
-	 *	Sets storage for caching.
-	 *	@access		public
-	 *	@static
-	 *	@param		CacheAdapterInterface	$storage		Storage instance to be used for caching
-	 *	@param		string						$prefix			Prefix for keys in cache.
-	 *	@return		void
-	 */
-	public static function setCache( CacheAdapterInterface $storage, string $prefix = '' )
-	{
-		self::$cache		= $storage;
-		self::$cachePrefix	= $prefix;
-	}
-
-	/**
 	 *	Loads a new template file if it exists. Otherwise it will throw an Exception.
 	 *	@param		string|NULL		$fileName 	File Name of Template
 	 *	@return		boolean
@@ -592,14 +536,71 @@ class Template
 		return TRUE;																				//  return with positive result
 	}
 
+	//  --  PROTECTED  --  //
+
 	/**
-	 *	Sets path to templates.
-	 *	@access		public
-	 *	@param		string		$path		Path to templates
+	 *	Counts loadings of template files and excepts if a file has been loaded too often.
+	 *	@static
+	 *	@access		protected
+	 *	@param		string		$filePath		...
 	 *	@return		void
+	 *	@throws		TemplateException
+	 *	@todo		make limit configurable
 	 */
-	public static function setTemplatePath( string $path )
+	protected static function checkLoadLimit( string $filePath )
 	{
-		self::$pathTemplates	= preg_replace( "@(.+)/$@", "\\1/", $path );
+		if( !in_array( $filePath, self::$loaded ) )													//  file not found in load list
+			self::$loaded[$filePath] = 1;															//  append file to load list
+		else
+			self::$loaded[$filePath]++;																//  count file load
+		if( self::$loaded[$filePath] > 100 ){														//  file loaded 100 times
+			throw new TemplateException(															//  break because limit is reached
+				TemplateException::FILE_LOAD_LIMIT,
+				$filePath
+			);
+		}
+	}
+
+	/**
+	 *	...
+	 *	@access		protected
+	 *	@param		array		$matches		...
+	 *	@return		string
+	 */
+	protected function applyFilters( array $matches ): string
+	{
+		$filters	= [];
+		if( empty( $matches[3] ) )
+			return $this->tmp;
+		foreach( explode( '|', $matches[3] ) as $filter ){
+			if( trim( $filter ) ){
+				$parts		= explode( ':', trim( $filter ) );
+				$filter		= $parts[0];
+				$arguments	= isset( $parts[1] ) ? explode( ',', $parts[1] ) : [];
+				if( array_key_exists( $filter, self::$filters ) ){
+					if(	is_string( self::$filters[$filter] ) )
+						self::$filters[$filter]	= ObjectFactory::createObject( self::$filters[$filter] );
+					$this->tmp	= self::$filters[$filter]->apply( $this->tmp, $arguments );
+				}
+			}
+		}
+		return $this->tmp;
+	}
+
+	/**
+	 *	Applies registered plugins directly to current template content.
+	 *	@access		protected
+	 *	@param		string		$content		Reference to current template content
+	 *	@param		string		$type			Type of plugins to apply: pre | post
+	 *	@return		string
+	 */
+	protected function applyPlugins( &$content, $type = 'pre' ): string
+	{
+		ksort( self::$plugins );
+		foreach( self::$plugins as $priority => $plugins )											//  iterate plugins priorities
+			foreach( $plugins as $plugin )															//  iterate plugins in priority
+				if( $plugin->getType() == $type )													//  plugin type is matching
+					$content	= $plugin->work( $content, $this->elements );						//  apply plugin on template content
+		return $content;
 	}
 }
