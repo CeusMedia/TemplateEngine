@@ -46,7 +46,7 @@ interface FilterInterface
 	 *	@param		array		$options		Filter options to set above default filter options
 	 *	@return		void
 	 */
-	public function __construct( array $options = array() );
+	public function __construct( array $options = [] );
 
 	/**
 	 *	Apply filter to content.
@@ -55,7 +55,7 @@ interface FilterInterface
 	 *	@param		array		$arguments		Arguments for filter
 	 *	@return		string
 	 */
-	public function apply( string $content, array $arguments = array() ): string;
+	public function apply( string $content, array $arguments = [] ): string;
 
 	/**
 	 *	Returns a list of keywords of this filter.

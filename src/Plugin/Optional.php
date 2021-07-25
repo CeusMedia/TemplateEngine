@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ *	...
  *
  *	Copyright (c) 2011 Christian Würker (ceusmedia.de)
  *
@@ -26,8 +26,10 @@
  */
 namespace CeusMedia\TemplateEngine\Plugin;
 
+use CeusMedia\TemplateEngine\PluginAbstract;
+
 /**
- *
+ *	...
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
@@ -35,12 +37,12 @@ namespace CeusMedia\TemplateEngine\Plugin;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-class Optional extends \CeusMedia\TemplateEngine\PluginAbstract
+class Optional extends PluginAbstract
 {
 	/**	@var		array		$options		Plugin options */
-	protected $options			= array(
+	protected $options			= [
 		'remove'	=> false
-	);
+	];
 
 	/**	@var		string		$type			Plugin type (pre|post) */
 	protected $type				= 'pre';

@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ *	...
  *
  *	Copyright (c) 2011 Christian Würker (ceusmedia.de)
  *
@@ -26,8 +26,12 @@
  */
 namespace CeusMedia\TemplateEngine\Plugin;
 
+use CeusMedia\TemplateEngine\PluginAbstract;
+use InvalidArgumentException;
+use RuntimeException;
+
 /**
- *
+ *	...
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
@@ -35,18 +39,18 @@ namespace CeusMedia\TemplateEngine\Plugin;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-class Matrix extends \CeusMedia\TemplateEngine\PluginAbstract
+class Matrix extends PluginAbstract
 {
 	/**	@var		string		$keyword		Plugin keyword */
 	protected $keyword			= 'matrix';
 
 	/**	@var		array		$options		Plugin options */
-	protected $options			= array(
+	protected $options			= [
 		'depth'		=> '1',
 		'delimiter'	=> '.',
 		'mode'		=> 'quite',
-		'data'		=> array()
-	);
+		'data'		=> []
+	];
 
 	/**	@var		string		$type			Plugin type (pre|post) */
 	protected $type				= 'pre';
@@ -59,7 +63,7 @@ class Matrix extends \CeusMedia\TemplateEngine\PluginAbstract
 	 *	@return		void
 	 *	@throws		\Exception					if options do not contain data of matrix
 	 */
-	public function __construct( array $options = array() )
+	public function __construct( array $options = [] )
 	{
 		if( isset( $options['keyword'] ) ){
 			$this->keyword	= $options['keyword'];
@@ -67,8 +71,8 @@ class Matrix extends \CeusMedia\TemplateEngine\PluginAbstract
 		}
 		if( isset( $options['data'] ) && is_array( $options['data'] ) )
 			$this->options['data']	=& $options['data'];
-		if( !isset( $this->options['data'] ) )
-			throw new \Exception( 'No matrix data provided' );
+		if( empty( $this->options['data'] ) )
+			throw new RuntimeException( 'No matrix data provided' );
 		parent::__construct( $options );
 	}
 
@@ -100,17 +104,17 @@ class Matrix extends \CeusMedia\TemplateEngine\PluginAbstract
 	 *	@param		mixed		$value		Reference to value for matrix key (if existing)
 	 *	@return		boolean
 	 */
-	protected function extractValue( string $key, &$value )
+	protected function extractValue( string $key, &$value ): bool
 	{
 		$depth	= $this->options['depth'];
 		$parts	= explode( $this->options['delimiter'], $key );
 		if( count( $parts ) != $depth )
-			throw new \InvalidArgumentException( 'Depth ('.count( $parts ).') of key ('.$key.') does not match matrix depth ('.$depth.')' );
+			throw new InvalidArgumentException( 'Depth ('.count( $parts ).') of key ('.$key.') does not match matrix depth ('.$depth.')' );
 		$data	= $this->options['data'];
 		for( $i=0; $i<$depth; $i++ ){
 			if( !isset( $data[$parts[$i]] ) ){
 				if( $this->options['mode'] == 'strict' )
-					throw new \Exception( 'Invalid: '.implode( '.', array_slice( $parts, 0, $i + 1) ) );
+					throw new RuntimeException( 'Invalid: '.implode( '.', array_slice( $parts, 0, $i + 1) ) );
 				else if( $this->options['mode'] == 'verbose' )
 					$data	= 'Missing: '.$key;
 				else

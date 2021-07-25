@@ -25,6 +25,8 @@
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 namespace CeusMedia\TemplateEngine\Filter;
+use CeusMedia\TemplateEngine\FilterAbstract;
+use Alg_Text_Filter as TextFilter;
 
 /**
  *	Filter to strip tags etc.
@@ -35,10 +37,11 @@ namespace CeusMedia\TemplateEngine\Filter;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-class Strip extends \CeusMedia\TemplateEngine\FilterAbstract
+class Strip extends FilterAbstract
 {
 	/**	@var		array		$keywords		Keywords to bind filter to on register */
-	protected $keywords	= array( 'strip' );
+	protected $keywords	= [ 'strip' ];
+
 
 	/**
 	 *	Apply filter to content.
@@ -47,7 +50,7 @@ class Strip extends \CeusMedia\TemplateEngine\FilterAbstract
 	 *	@param		array		$arguments		Arguments for filter, a list of: tags | space | comments | styles | scripts
 	 *	@return		string
 	 */
-	public function apply( string $content, array $arguments = array() ): string
+	public function apply( string $content, array $arguments = [] ): string
 	{
 		foreach( $arguments as $type ){
 			switch( $type ){
@@ -58,13 +61,13 @@ class Strip extends \CeusMedia\TemplateEngine\FilterAbstract
 					$content	= trim( $content );
 					break;
 				case 'comments':
-					$content	= \Alg_Text_Filter::stripComments( $content );
+					$content	= TextFilter::stripComments( $content );
 					break;
 				case 'styles':
-					$content	= \Alg_Text_Filter::stripStyles( $content );
+					$content	= TextFilter::stripStyles( $content );
 					break;
 				case 'scripts':
-					$content	= \Alg_Text_Filter::stripScripts( $content );
+					$content	= TextFilter::stripScripts( $content );
 					break;
 			}
 		}

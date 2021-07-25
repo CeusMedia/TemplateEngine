@@ -25,6 +25,9 @@
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 namespace CeusMedia\TemplateEngine\Filter;
+use CeusMedia\TemplateEngine\FilterAbstract;
+use UI_HTML_Tag as HtmlTag;
+use ADT_JSON_Formater as JsonFormater;
 
 /**
  *	Filter to display code of several languages in several ways.
@@ -35,10 +38,10 @@ namespace CeusMedia\TemplateEngine\Filter;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-class Code extends \CeusMedia\TemplateEngine\FilterAbstract
+class Code extends FilterAbstract
 {
 	/**	@var		array		$keywords		Keywords to bind filter to on register */
-	protected $keywords	= array( 'code' );
+	protected $keywords	= [ 'code' ];
 
 	/**
 	 *	Apply filter to content.
@@ -47,24 +50,24 @@ class Code extends \CeusMedia\TemplateEngine\FilterAbstract
 	 *	@param		array		$arguments		Arguments for filter
 	 *	@return		string
 	 */
-	public function apply( string $content, array $arguments = array()): string
+	public function apply( string $content, array $arguments = [] ): string
 	{
 		$format		= array_shift( $arguments );
 		$language	= array_shift( $arguments );													//  get language from first argument
 		switch( $format ){
 			case 'xmp':
 				$class		= $language ? $language : NULL;											//  get CSS class from chosen language
-				$content	= \UI_HTML_Tag::create( 'xmp', $content, array( 'class' => $class ) );
+				$content	= HtmlTag::create( 'xmp', $content, [ 'class' => $class ] );
 				break;
 			case 'highlight':
 				$content	= highlight_string( $content, TRUE );
 				break;
 			case 'json':
-				$content	= \ADT_JSON_Formater::format( $content );
+				$content	= JsonFormater::format( $content );
 				break;
 			default:
 				$class		= $language ? $language : NULL;											//  get CSS class from chosen language
-				$content	= \UI_HTML_Tag::create( 'code', $content, array( 'class' => $class ) );	//  create code tag
+				$content	= HtmlTag::create( 'code', $content, [ 'class' => $class ] );		//  create code tag
 				break;
 		}
 		return $content;

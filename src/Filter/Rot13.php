@@ -25,6 +25,7 @@
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 namespace CeusMedia\TemplateEngine\Filter;
+use CeusMedia\TemplateEngine\FilterAbstract;
 
 /**
  *	ROT13 Filter.
@@ -35,10 +36,10 @@ namespace CeusMedia\TemplateEngine\Filter;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-class Rot13 extends \CeusMedia\TemplateEngine\FilterAbstract
+class Rot13 extends FilterAbstract
 {
 	/**	@var		array		$keywords		Keywords to bind filter to on register */
-	protected $keywords	= array( 'rot13' );
+	protected $keywords	= [ 'rot13' ];
 
 	/**
 	 *	Apply filter to content.
@@ -47,7 +48,7 @@ class Rot13 extends \CeusMedia\TemplateEngine\FilterAbstract
 	 *	@param		array		$arguments		Arguments for filter
 	 *	@return		string
 	 */
-	public function apply( string $content, array $arguments = array() ): string
+	public function apply( string $content, array $arguments = [] ): string
 	{
 		return str_rot13( $content );
 	}

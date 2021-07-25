@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ *	...
  *
  *	Copyright (c) 2011 Christian Würker (ceusmedia.de)
  *
@@ -26,8 +26,11 @@
  */
 namespace CeusMedia\TemplateEngine\Plugin;
 
+use CeusMedia\TemplateEngine\PluginAbstract;
+use CeusMedia\TemplateEngine\Template;
+
 /**
- *
+ *	...
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
@@ -35,7 +38,7 @@ namespace CeusMedia\TemplateEngine\Plugin;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-class Inclusion extends \CeusMedia\TemplateEngine\PluginAbstract
+class Inclusion extends PluginAbstract
 {
 	/**	@var		string		$keyword		Plugin keyword */
 	protected $keyword			= 'include';
@@ -61,7 +64,7 @@ class Inclusion extends \CeusMedia\TemplateEngine\PluginAbstract
 		for( $i=0; $i<count( $matches[0] ); $i++ ){
 			$hash		= 'STE'.uniqid();															//  insert a hash value as replacement
 			$filePath	= $matches[2][$i];
-			$content	= \CeusMedia\TemplateEngine\Template::renderFile( $filePath, $elements );
+			$content	= Template::renderFile( $filePath, $elements );
 			$elements[$hash]	= trim( $content );
 			$value		= '<%?'.$hash.$matches[3][$i].'%>';
 			$template	= str_replace( $matches[0][$i], $value, $template );

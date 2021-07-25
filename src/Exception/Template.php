@@ -25,6 +25,7 @@
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 namespace CeusMedia\TemplateEngine\Exception;
+use RuntimeException;
 
 /**
  *	Exception for Templates.
@@ -35,60 +36,61 @@ namespace CeusMedia\TemplateEngine\Exception;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-class Template extends \RuntimeException
+class Template extends RuntimeException
 {
 	const FILE_NOT_FOUND		= 0;
 	const FILE_LABELS_MISSING	= 1;
 	const LABELS_MISSING		= 2;
-//	const DATA_MISSING			= 3;
+	const FILE_LOAD_LIMIT		= 3;
 
-	/**	@var		array		$messages		Map of Exception Messages, can be overwritten statically */
-	public static $messages	= array(
+	/**	@var		array<int,string>	$messages		Map of Exception Messages, can be overwritten statically */
+	public static $messages	= [
 		self::FILE_NOT_FOUND		=> 'Template File "%1$s" is missing',
 		self::FILE_LABELS_MISSING	=> 'Template "%1$s" is missing %2$s',
 		self::LABELS_MISSING		=> 'Template is missing %1$s',
-//s		self::DATA_MISSING			=> 'Template data is missing',
-	);
+		self::FILE_LOAD_LIMIT		=> 'Load limit reached for template "%1$s"'
+	];
 
-	/**	@var		array		$labels			Holds all not used and non optional labels */
-	protected $labels			= array();
+	/**	@var		array<int,string>	$labels			Holds all not used and non optional labels */
+	protected $labels			= [];
 
-	/**	@var		string		$filePath		File Path of Template, set only if not found */
-	protected $filePath			= '';
+	/**	@var		string|NULL			$filePath		File Path of Template, set only if not found */
+	protected $filePath			= NULL;
 
 	/**
 	 *	Constructor.
 	 *	@access		public
-	 *	@param		int			$code			Exception Code
-	 *	@param		string		$fileName		File Name of Template
-	 *	@param		array		$data			Some additional data
+	 *	@param		int				$code			Exception Code
+	 *	@param		string|NULL		$fileName		File Name of Template
+	 *	@param		array			$data			Some additional data
+	 *	@param		Throwable|NULL	$previous		Parent exception
 	 *	@return		void
 	 */
-	public function __construct( $code, string $fileName, array $data = array() )
+	public function __construct( $code, ?string $fileName = NULL, array $data = [], Throwable|NULL $previous = NULL )
 	{
+		$this->filePath	= $fileName;
 		$tagList	= '"'.implode( '", "', $data ).'"';
 		switch( $code )
 		{
 			case self::FILE_NOT_FOUND:
-				$this->filePath	= current( $data );
-				$message		= self::$messages[self::FILE_NOT_FOUND];
+			case self::FILE_LOAD_LIMIT:
+				$this->labels	= $data;
+				$message		= self::$messages[$code];
 				$message		= sprintf( $message, $fileName );
-				parent::__construct( $message, self::FILE_NOT_FOUND );
+				parent::__construct( $message, $code, $previous );
 				break;
 			case self::FILE_LABELS_MISSING:
 				$this->labels	= $data;
 				$message		= self::$messages[self::FILE_LABELS_MISSING];
 				$message		= sprintf( $message, $fileName, $tagList );
-				parent::__construct( $message, self::FILE_LABELS_MISSING );
+				parent::__construct( $message, self::FILE_LABELS_MISSING, $previous );
 				break;
 			case self::LABELS_MISSING:
 				$this->labels	= $data;
 				$message		= self::$messages[self::LABELS_MISSING];
 				$message		= sprintf( $message, $tagList );
-				parent::__construct( $message, self::LABELS_MISSING );
+				parent::__construct( $message, self::LABELS_MISSING, $previous );
 				break;
-//			case self::DATA_MISSING:
-//				break;
 		}
 	}
 
@@ -105,9 +107,9 @@ class Template extends \RuntimeException
 	/**
 	 *	Returns File Path of Template if not found.
 	 *	@access	  public
-	 *	@return	  string		{@link $filePath}
+	 *	@return	  string|NULL		{@link $filePath}
 	 */
-	public function getFilePath(): string
+	public function getFilePath(): ?string
 	{
 		return $this->filePath;
 	}

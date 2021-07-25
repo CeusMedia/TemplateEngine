@@ -26,6 +26,7 @@
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 namespace CeusMedia\TemplateEngine;
+use CeusMedia\TemplateEngine\FilterInterface;
 
 /**
  *	Abstraction for template engine filters.
@@ -37,13 +38,14 @@ namespace CeusMedia\TemplateEngine;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-abstract class FilterAbstract implements \CeusMedia\TemplateEngine\FilterInterface
+abstract class FilterAbstract implements FilterInterface
 {
+
 	/**	@var		array		$keywords		Keywords to bind filter to on register */
-	protected $keywords	= array();
+	protected $keywords	= [];
 
 	/**	@var		array		$options		Filter options */
-	protected $options	= array();
+	protected $options	= [];
 
 	/**
 	 *	Constructor.

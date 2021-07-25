@@ -1,6 +1,6 @@
 <?php
 /**
- *
+ *	...
  *
  *	Copyright (c) 2011 Christian Würker (ceusmedia.de)
  *
@@ -26,8 +26,15 @@
  */
 namespace CeusMedia\TemplateEngine\Plugin;
 
+use CeusMedia\TemplateEngine\PluginAbstract;
+use FS_File_Reader as FileReader;
+use Exception;
+use Exception_IO;
+use InvalidArgumentException;
+use RuntimeException;
+
 /**
- *
+ *	...
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
@@ -35,16 +42,16 @@ namespace CeusMedia\TemplateEngine\Plugin;
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
-class File extends \CeusMedia\TemplateEngine\PluginAbstract
+class File extends PluginAbstract
 {
 	/**	@var		string		$keyword		Plugin keyword */
 	protected $keyword			= 'file';
 
 	/**	@var		array		$options		Plugin options */
-	protected $options			= array(
+	protected $options			= [
 		'path'		=> '',
 		'mode'		=> 'strict'
-	);
+	];
 
 	/**	@var		string		$type			Plugin type (pre|post) */
 	protected $type				= 'pre';
@@ -56,7 +63,7 @@ class File extends \CeusMedia\TemplateEngine\PluginAbstract
 	 *	@param		array		$options		Plugin options to set above default plugin options
 	 *	@return		void
 	 */
-	public function __construct( array $options = array() )
+	public function __construct( array $options = [] )
 	{
 		if( isset( $options['keyword'] ) ){
 			$this->keyword	= $options['keyword'];
@@ -78,11 +85,11 @@ class File extends \CeusMedia\TemplateEngine\PluginAbstract
 	 *	@param		array		$elements		Elements assigned to template
 	 *	@return		string
 	 */
-	public function work( string $template, array &$elements ): string
+	public function work( string $template, &$elements ): string
 	{
 		if( !isset( $this->options['path'] ) )
-			throw new \RuntimeException( 'No path set' );
-		$matches	= array();
+			throw new RuntimeException( 'No path set' );
+		$matches	= [];
 		$pattern	= '/<(\?)?%'.$this->keyword.'\((.+)\)(\|.+)?%>/U';
 		preg_match_all( $pattern, $template, $matches );
 		if( !$matches[0] )
@@ -91,14 +98,14 @@ class File extends \CeusMedia\TemplateEngine\PluginAbstract
 		for( $i=0; $i<count( $matches[0] ); $i++ ){
 			try{
 				$hash		= 'STE'.uniqid();														//  create unique hash value
-				$content	= \FS_File_Reader::load( $this->getFileNameFromKey( $matches[2][$i] ) );	//  load file content
+				$content	= FileReader::load( $this->getFileNameFromKey( $matches[2][$i] ) );		//  load file content
 				$content	= preg_replace( '/<%(.+)%>/U', '&lt;%$1%&gt;', $content );				//  escape tags in content
 				$elements[$hash]	= $content;														//  store file content in elements by its hash value as new template tag
 				$value		= '<%?'.$hash.$matches[3][$i].'%>';										//  replacement for tag is a hash tag
 			}
 			catch( \Throwable $e ){																	//  catch all exceptions
 				if( $this->options['mode'] == 'strict' )											//  strict error mode
-					throw new \Exception_IO( 'Invalid file', 0, /*$e, */$matches[2][$i] );			//  throw an exception
+					throw new Exception_IO( 'Invalid file', 0, $matches[2][$i], $e );				//  throw an exception
 				else if( $this->options['mode'] == 'verbose' )										//  verbose error mode
 					$value	= 'Missing file: '.$matches[2][$i];										//
 				else
@@ -116,7 +123,7 @@ class File extends \CeusMedia\TemplateEngine\PluginAbstract
 	 *	@param		string		$key			Key of external file to load
 	 *	@return		string
 	 */
-	protected function getFileNameFromKey( $key )
+	protected function getFileNameFromKey( string $key ): string
 	{
 		return $this->options['path'].$key;
 	}

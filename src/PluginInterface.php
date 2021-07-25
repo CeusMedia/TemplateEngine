@@ -46,7 +46,7 @@ interface PluginInterface
 	 *	@param		array		$options		Plugin options to set above default plugin options
 	 *	@return		void
 	 */
-	public function __construct( array $options = array() );
+	public function __construct( array $options = [] );
 
 	/**
 	 *	Apply plugin to template content.
