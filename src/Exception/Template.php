@@ -42,24 +42,24 @@ use Throwable;
  */
 class Template extends RuntimeException
 {
-	const FILE_NOT_FOUND		= 0;
-	const FILE_LABELS_MISSING	= 1;
-	const LABELS_MISSING		= 2;
-	const FILE_LOAD_LIMIT		= 3;
+	public const FILE_NOT_FOUND			= 0;
+	public const FILE_LABELS_MISSING	= 1;
+	public const LABELS_MISSING			= 2;
+	public const FILE_LOAD_LIMIT		= 3;
 
 	/**	@var		array<int,string>	$messages		Map of Exception Messages, can be overwritten statically */
-	public static $messages	= [
+	public static array $messages	= [
 		self::FILE_NOT_FOUND		=> 'Template File "%1$s" is missing',
 		self::FILE_LABELS_MISSING	=> 'Template "%1$s" is missing %2$s',
 		self::LABELS_MISSING		=> 'Template is missing %1$s',
 		self::FILE_LOAD_LIMIT		=> 'Load limit reached for template "%1$s"'
 	];
 
-	/**	@var		array<int,string>	$labels			Holds all not used and non optional labels */
-	protected $labels			= [];
+	/**	@var		array<int,string>	$labels			Holds all not used and non-optional labels */
+	protected array $labels			= [];
 
 	/**	@var		string|NULL			$filePath		File Path of Template, set only if not found */
-	protected $filePath			= NULL;
+	protected ?string $filePath			= NULL;
 
 	/**
 	 *	Constructor.

@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
+
 /**
  *	...
  *
@@ -27,11 +28,11 @@
 namespace CeusMedia\TemplateEngine\Plugin;
 
 use CeusMedia\TemplateEngine\PluginAbstract;
-use FS_File_Reader as FileReader;
-use Exception;
-use Exception_IO;
+use CeusMedia\Common\FS\File\Reader as FileReader;
+use CeusMedia\Common\Exception\IO as IoException;
 use InvalidArgumentException;
 use RuntimeException;
+use Throwable;
 
 /**
  *	...
@@ -45,16 +46,16 @@ use RuntimeException;
 class File extends PluginAbstract
 {
 	/**	@var		string		$keyword		Plugin keyword */
-	protected $keyword			= 'file';
+	protected string $keyword	= 'file';
 
 	/**	@var		array		$options		Plugin options */
-	protected $options			= [
+	protected array $options	= [
 		'path'		=> '',
 		'mode'		=> 'strict'
 	];
 
 	/**	@var		string		$type			Plugin type (pre|post) */
-	protected $type				= 'pre';
+	protected string $type		= 'pre';
 
 	/**
 	 *	Constructor.
@@ -74,7 +75,7 @@ class File extends PluginAbstract
 			unset( $options['path'] );
 		}
 		if( !isset( $this->options['path'] ) )
-			throw new \InvalidArgumentException( 'No path set' );
+			throw new InvalidArgumentException( 'No path set' );
 		parent::__construct( $options );
 	}
 
@@ -84,8 +85,10 @@ class File extends PluginAbstract
 	 *	@param		string		$template		Template content
 	 *	@param		array		$elements		Elements assigned to template
 	 *	@return		string
+	 *	@throws		RuntimeException
+	 *	@throws		IoException
 	 */
-	public function work( string $template, &$elements ): string
+	public function work( string $template, array &$elements ): string
 	{
 		if( !isset( $this->options['path'] ) )
 			throw new RuntimeException( 'No path set' );
@@ -94,18 +97,18 @@ class File extends PluginAbstract
 		preg_match_all( $pattern, $template, $matches );
 		if( !$matches[0] )
 			return $template;
-		$value	= NULL;
+
 		for( $i=0; $i<count( $matches[0] ); $i++ ){
 			try{
 				$hash		= 'STE'.uniqid();														//  create unique hash value
 				$content	= FileReader::load( $this->getFileNameFromKey( $matches[2][$i] ) );		//  load file content
 				$content	= preg_replace( '/<%(.+)%>/U', '&lt;%$1%&gt;', $content );				//  escape tags in content
 				$elements[$hash]	= $content;														//  store file content in elements by its hash value as new template tag
-				$value		= '<%?'.$hash.$matches[3][$i].'%>';										//  replacement for tag is a hash tag
+				$value		= '<%?'.$hash.$matches[3][$i].'%>';										//  replacement for tag is a hashtag
 			}
-			catch( \Throwable $e ){																	//  catch all exceptions
+			catch( Throwable $e ){																	//  catch all exceptions
 				if( $this->options['mode'] == 'strict' )											//  strict error mode
-					throw new Exception_IO( 'Invalid file', 0, $matches[2][$i], $e );				//  throw an exception
+					throw new IoException( 'Invalid file', 0, $matches[2][$i], $e );				//  throw an exception
 				else if( $this->options['mode'] == 'verbose' )										//  verbose error mode
 					$value	= 'Missing file: '.$matches[2][$i];										//
 				else
@@ -117,8 +120,8 @@ class File extends PluginAbstract
 	}
 
 	/**
-	 *	Returnes the file name by its key,
-	 *	This method is meant to be overriden for different behaviour.
+	 *	Returns the file name by its key,
+	 *	This method is meant to be overridden for different behaviour.
 	 *	@access		protected
 	 *	@param		string		$key			Key of external file to load
 	 *	@return		string

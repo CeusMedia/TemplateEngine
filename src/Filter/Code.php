@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
+
 /**
  *	Filter to display code of several languages in several ways.
  *
@@ -27,8 +28,8 @@
 namespace CeusMedia\TemplateEngine\Filter;
 
 use CeusMedia\TemplateEngine\FilterAbstract;
-use UI_HTML_Tag as HtmlTag;
-use ADT_JSON_Formater as JsonFormater;
+use CeusMedia\Common\UI\HTML\Tag as HtmlTag;
+use CeusMedia\Common\ADT\JSON\Pretty as JsonPretty;
 
 /**
  *	Filter to display code of several languages in several ways.
@@ -42,7 +43,7 @@ use ADT_JSON_Formater as JsonFormater;
 class Code extends FilterAbstract
 {
 	/**	@var		array		$keywords		Keywords to bind filter to on register */
-	protected $keywords	= [ 'code' ];
+	protected array $keywords	= [ 'code' ];
 
 	/**
 	 *	Apply filter to content.
@@ -57,17 +58,17 @@ class Code extends FilterAbstract
 		$language	= array_shift( $arguments );													//  get language from first argument
 		switch( $format ){
 			case 'xmp':
-				$class		= $language ? $language : NULL;											//  get CSS class from chosen language
+				$class		= $language ?: NULL;													//  get CSS class from chosen language
 				$content	= HtmlTag::create( 'xmp', $content, [ 'class' => $class ] );
 				break;
 			case 'highlight':
 				$content	= highlight_string( $content, TRUE );
 				break;
 			case 'json':
-				$content	= JsonFormater::format( $content );
+				$content	= JsonPretty::print( $content );
 				break;
 			default:
-				$class		= $language ? $language : NULL;											//  get CSS class from chosen language
+				$class		= $language ?: NULL;													//  get CSS class from chosen language
 				$content	= HtmlTag::create( 'code', $content, [ 'class' => $class ] );		//  create code tag
 				break;
 		}

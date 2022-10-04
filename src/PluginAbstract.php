@@ -27,6 +27,8 @@
  */
 namespace CeusMedia\TemplateEngine;
 
+use DomainException;
+
 /**
  *	Abstraction for plugins.
  *	@category		Library
@@ -40,16 +42,16 @@ namespace CeusMedia\TemplateEngine;
 abstract class PluginAbstract implements PluginInterface
 {
 	/**	@var		string		$keyword		Plugin keyword */
-	protected $keyword			= '';
+	protected string $keyword	= '';
 
 	/**	@var		array		$options		Plugin options */
-	protected $options			= array();
+	protected array $options	= [];
 
 	/**	@var		integer		$priority		Plugin priority: 1(highest) - 9(lowest) */
-	protected $priority			= 5;
+	protected int $priority		= 5;
 
 	/**	@var		string		$type			Plugin type (pre|post) */
-	protected $type				= 'pre';
+	protected string $type		= 'pre';
 
 	/**
 	 *	Constructor.
@@ -58,12 +60,12 @@ abstract class PluginAbstract implements PluginInterface
 	 *	@param		array		$options		Plugin options to set above default plugin options
 	 *	@return		void
 	 */
-	public function __construct( array $options = array() )
+	public function __construct( array $options = [] )
 	{
 		foreach( $options as $key => $value )
 			$this->options[$key]	= $value;
 		if( strlen( trim( $this->keyword ) ) === 0 )
-			throw new \DomainException( 'Plugin class "'.get_class( $this ).'" does not set an unique plugin key' );
+			throw new DomainException( 'Plugin class "'.get_class( $this ).'" does not set an unique plugin key' );
 	}
 
 	/**

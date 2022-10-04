@@ -41,7 +41,7 @@ use RuntimeException;
 class Tidy extends PluginAbstract
 {
 	/**	@var		array		$options		Plugin options */
-	protected $options			= [
+	protected array $options			= [
 		'show-body-only'				=> true,
 		'clean'							=> true,
 		'char-encoding'					=> 'utf8',
@@ -86,10 +86,10 @@ class Tidy extends PluginAbstract
 	];
 
 	/**	@var		integer		$priority		Plugin priority: 1(highest) - 9(lowest) */
-	protected $priority			= 9;
+	protected int $priority			= 9;
 
 	/**	@var		string		$type			Plugin type (pre|post) */
-	protected $type				= 'post';
+	protected string $type				= 'post';
 
 	/**
 	 *	Apply plugin to template content.
@@ -97,6 +97,7 @@ class Tidy extends PluginAbstract
 	 *	@param		string		$template		Template content
 	 *	@param		array		$elements		Reference to elements assigned to template
 	 *	@return		string
+	 *	@throws		RuntimeException			if extension 'tidy' is not installed
 	 */
 	public function work( string $template, array &$elements ): string
 	{

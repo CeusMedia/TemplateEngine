@@ -1,4 +1,5 @@
-<?php
+<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
+
 /**
  *	Filter to strip tags etc.
  *
@@ -27,7 +28,7 @@
 namespace CeusMedia\TemplateEngine\Filter;
 
 use CeusMedia\TemplateEngine\FilterAbstract;
-use Alg_Text_Filter as TextFilter;
+use CeusMedia\Common\Alg\Text\Filter as TextFilter;
 
 /**
  *	Filter to strip tags etc.
@@ -41,7 +42,7 @@ use Alg_Text_Filter as TextFilter;
 class Strip extends FilterAbstract
 {
 	/**	@var		array		$keywords		Keywords to bind filter to on register */
-	protected $keywords	= [ 'strip' ];
+	protected array $keywords	= [ 'strip' ];
 
 	/**
 	 *	Apply filter to content.

@@ -26,7 +26,6 @@
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 namespace CeusMedia\TemplateEngine;
-use CeusMedia\TemplateEngine\FilterInterface;
 
 /**
  *	Abstraction for template engine filters.
@@ -42,10 +41,10 @@ abstract class FilterAbstract implements FilterInterface
 {
 
 	/**	@var		array		$keywords		Keywords to bind filter to on register */
-	protected $keywords	= [];
+	protected array $keywords	= [];
 
 	/**	@var		array		$options		Filter options */
-	protected $options	= [];
+	protected array $options	= [];
 
 	/**
 	 *	Constructor.
@@ -54,7 +53,7 @@ abstract class FilterAbstract implements FilterInterface
 	 *	@param		array		$options		Filter options to set above default filter options
 	 *	@return		void
 	 */
-	public function __construct( array $options = array() )
+	public function __construct( array $options = [] )
 	{
 		foreach( $options as $key => $value )
 			$this->options[$key]	= $value;

@@ -40,12 +40,12 @@ use CeusMedia\TemplateEngine\PluginAbstract;
 class Optional extends PluginAbstract
 {
 	/**	@var		array		$options		Plugin options */
-	protected $options			= [
+	protected array $options			= [
 		'remove'	=> false
 	];
 
 	/**	@var		string		$type			Plugin type (pre|post) */
-	protected $type				= 'pre';
+	protected string $type				= 'pre';
 
 	/**
 	 *	Apply plugin to template content.

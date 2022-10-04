@@ -42,10 +42,10 @@ use RuntimeException;
 class Matrix extends PluginAbstract
 {
 	/**	@var		string		$keyword		Plugin keyword */
-	protected $keyword			= 'matrix';
+	protected string $keyword	= 'matrix';
 
 	/**	@var		array		$options		Plugin options */
-	protected $options			= [
+	protected array $options	= [
 		'depth'		=> '1',
 		'delimiter'	=> '.',
 		'mode'		=> 'quite',
@@ -53,7 +53,7 @@ class Matrix extends PluginAbstract
 	];
 
 	/**	@var		string		$type			Plugin type (pre|post) */
-	protected $type				= 'pre';
+	protected string $type		= 'pre';
 
 	/**
 	 *	Constructor.
@@ -61,7 +61,7 @@ class Matrix extends PluginAbstract
 	 *	@access		public
 	 *	@param		array		$options		Plugin options to set above default plugin options
 	 *	@return		void
-	 *	@throws		\Exception					if options do not contain data of matrix
+	 *	@throws		RuntimeException			if options do not contain data of matrix
 	 */
 	public function __construct( array $options = [] )
 	{
@@ -71,7 +71,7 @@ class Matrix extends PluginAbstract
 		}
 		if( isset( $options['data'] ) && is_array( $options['data'] ) )
 			$this->options['data']	=& $options['data'];
-		if( empty( $this->options['data'] ) )
+		if( !isset( $this->options['data'] ) )
 			throw new RuntimeException( 'No matrix data provided' );
 		parent::__construct( $options );
 	}
@@ -85,7 +85,7 @@ class Matrix extends PluginAbstract
 	 */
 	public function work( string $template, array &$elements ): string
 	{
-		$matches	= array();
+		$matches	= [];
 		$pattern	= '/<(\?)?%'.$this->keyword.'\((.+)\)%>/U';
 		preg_match_all( $pattern, $template, $matches );
 		if( !$matches[0] )

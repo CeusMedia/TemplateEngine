@@ -41,10 +41,10 @@ use CeusMedia\TemplateEngine\Template;
 class Inclusion extends PluginAbstract
 {
 	/**	@var		string		$keyword		Plugin keyword */
-	protected $keyword			= 'include';
+	protected string $keyword	= 'include';
 
 	/**	@var		string		$type			Plugin type (pre|post) */
-	protected $type				= 'pre';
+	protected string $type		= 'pre';
 
 	/**
 	 *	Apply plugin to template content.
@@ -55,7 +55,7 @@ class Inclusion extends PluginAbstract
 	 */
 	public function work( string $template, array &$elements ): string
 	{
-		$matches	= array();
+		$matches	= [];
 		$pattern	= '/<(\?)?%'.$this->keyword.'\((.+)\)(\|.+)?%>/U';
 		preg_match_all( $pattern, $template, $matches );
 		if( !$matches[0] )

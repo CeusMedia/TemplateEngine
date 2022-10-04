@@ -40,7 +40,7 @@ use CeusMedia\TemplateEngine\FilterAbstract;
 class Rot13 extends FilterAbstract
 {
 	/**	@var		array		$keywords		Keywords to bind filter to on register */
-	protected $keywords	= [ 'rot13' ];
+	protected array $keywords	= [ 'rot13' ];
 
 	/**
 	 *	Apply filter to content.

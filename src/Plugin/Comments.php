@@ -40,12 +40,12 @@ use CeusMedia\TemplateEngine\PluginAbstract;
 class Comments extends PluginAbstract
 {
 	/**	@var		array		$options		Plugin options */
-	protected $options	= [
+	protected array $options	= [
 		'remove'	=> false,
 	];
 
 	/**	@var		string		$type			Plugin type (pre|post) */
-	protected $type		= 'post';
+	protected string $type		= 'post';
 
 	/**
 	 *	Apply plugin to template content.
@@ -57,7 +57,7 @@ class Comments extends PluginAbstract
 	public function work( string $template, array &$elements ): string
 	{
  		$template	= (string) preg_replace( '/<%--.*--%>/sU', '', $template );						//  remove template engine style comments
- 		if( isset( $this->options['remove'] ) && (bool) $this->options['remove'] )					//  HTML comments should be removed
+ 		if( isset( $this->options['remove'] ) && $this->options['remove'] )							//  HTML comments should be removed
 			$template	= (string) preg_replace( '/<!--.+-->/sU', '', $template );					//  find and remove all HTML comments
 		return $template;
 	}
