@@ -1,9 +1,12 @@
-<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
+<?php
+/** @noinspection PhpMultipleClassDeclarationsInspection */
+
+declare(strict_types=1);
 
 /**
  *	Filter to display code of several languages in several ways.
  *
- *	Copyright (c) 2011-2021 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2011-2022 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -21,7 +24,7 @@
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine_Filter
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011-2021 Christian Würker
+ *	@copyright		2011-2022 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
@@ -36,14 +39,14 @@ use CeusMedia\Common\ADT\JSON\Pretty as JsonPretty;
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine_Filter
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011-2021 Christian Würker
+ *	@copyright		2011-2022 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 class Code extends FilterAbstract
 {
 	/**	@var		array		$keywords		Keywords to bind filter to on register */
-	protected array $keywords	= [ 'code' ];
+	protected array $keywords	= ['code'];
 
 	/**
 	 *	Apply filter to content.
@@ -55,11 +58,11 @@ class Code extends FilterAbstract
 	public function apply( string $content, array $arguments = [] ): string
 	{
 		$format		= array_shift( $arguments );
-		$language	= array_shift( $arguments );													//  get language from first argument
+		$language	= array_shift( $arguments );												//  get language from first argument
 		switch( $format ){
 			case 'xmp':
-				$class		= $language ?: NULL;													//  get CSS class from chosen language
-				$content	= HtmlTag::create( 'xmp', $content, [ 'class' => $class ] );
+				$class		= $language;															//  get CSS class from chosen language
+				$content	= HtmlTag::create( 'xmp', $content, ['class' => $class] );
 				break;
 			case 'highlight':
 				$content	= highlight_string( $content, TRUE );
@@ -68,8 +71,8 @@ class Code extends FilterAbstract
 				$content	= JsonPretty::print( $content );
 				break;
 			default:
-				$class		= $language ?: NULL;													//  get CSS class from chosen language
-				$content	= HtmlTag::create( 'code', $content, [ 'class' => $class ] );		//  create code tag
+				$class		= $language;															//  get CSS class from chosen language
+				$content	= HtmlTag::create( 'code', $content, ['class' => $class] );		//  create code tag
 				break;
 		}
 		return $content;

@@ -1,10 +1,13 @@
-<?php /** @noinspection PhpMultipleClassDeclarationsInspection */
+<?php
+/** @noinspection PhpMultipleClassDeclarationsInspection */
 /** @noinspection PhpUnused */
+
+declare(strict_types=1);
 
 /**
  *	Template Class.
  *
- *	Copyright (c) 2007-2021 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2007-2022 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -23,10 +26,11 @@
  *	@package		CeusMedia_TemplateEngine
  *	@author			David Seebacher <dseebacher@gmail.com>
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2007-2021 Christian Würker
+ *	@copyright		2007-2022 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
+
 namespace CeusMedia\TemplateEngine;
 
 use ArrayObject;
@@ -51,7 +55,7 @@ use function method_exists;
  *	@package		CeusMedia_TemplateEngine
  *	@author			David Seebacher <dseebacher@gmail.com>
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2007-2021 Christian Würker
+ *	@copyright		2007-2022 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
@@ -581,7 +585,7 @@ class Template
 	 */
 	protected function applyFilters( array $matches ): string
 	{
-		if( empty( $matches[3] ) )
+		if( strlen( $matches[3] ?? '' ) === 0 )
 			return $this->tmp;
 		foreach( explode( '|', $matches[3] ) as $filter ){
 			if( 0 !== strlen( trim( $filter ) ) ){

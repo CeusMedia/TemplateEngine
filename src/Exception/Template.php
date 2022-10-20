@@ -1,8 +1,10 @@
 <?php
+declare(strict_types=1);
+
 /**
  *	Exception for Templates.
  *
- *	Copyright (c) 2007-2021 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2007-2022 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -21,12 +23,14 @@
  *	@package		CeusMedia_TemplateEngine
  *	@author			David Seebacher <dseebacher@gmail.com>
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2007-2021 Christian Würker
+ *	@copyright		2007-2022 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
+
 namespace CeusMedia\TemplateEngine\Exception;
 
+use DomainException;
 use RuntimeException;
 use Throwable;
 
@@ -36,7 +40,7 @@ use Throwable;
  *	@package		CeusMedia_TemplateEngine
  *	@author			David Seebacher <dseebacher@gmail.com>
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2007-2021 Christian Würker
+ *	@copyright		2007-2022 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
@@ -73,35 +77,29 @@ class Template extends RuntimeException
 	public function __construct( $code, ?string $fileName = NULL, array $data = [], ?Throwable $previous = NULL )
 	{
 		$this->filePath	= $fileName;
+		$this->labels	= $data;
 		$tagList	= '"'.implode( '", "', $data ).'"';
-		switch( $code )
-		{
+		switch( $code ){
 			case self::FILE_NOT_FOUND:
 			case self::FILE_LOAD_LIMIT:
-				$this->labels	= $data;
-				$message		= self::$messages[$code];
-				$message		= sprintf( $message, $fileName );
-				parent::__construct( $message, $code, $previous );
+				$message		= sprintf( self::$messages[$code], $fileName );
 				break;
 			case self::FILE_LABELS_MISSING:
-				$this->labels	= $data;
-				$message		= self::$messages[self::FILE_LABELS_MISSING];
-				$message		= sprintf( $message, $fileName, $tagList );
-				parent::__construct( $message, self::FILE_LABELS_MISSING, $previous );
+				$message		= sprintf( self::$messages[self::FILE_LABELS_MISSING], $fileName, $tagList );
 				break;
 			case self::LABELS_MISSING:
-				$this->labels	= $data;
-				$message		= self::$messages[self::LABELS_MISSING];
-				$message		= sprintf( $message, $tagList );
-				parent::__construct( $message, self::LABELS_MISSING, $previous );
+				$message		= sprintf( self::$messages[self::LABELS_MISSING], $tagList );
 				break;
+			default:
+				throw new DomainException( 'Invalid template exception code' );
 		}
+		parent::__construct( $message, $code, $previous );
 	}
 
 	/**
 	 *	Returns File Path of Template if not found.
-	 *	@access	  public
-	 *	@return	  string|NULL		{@link $filePath}
+	 *	@access		public
+	 *	@return		string|NULL		{@link $filePath}
 	 */
 	public function getFilePath(): ?string
 	{
@@ -110,8 +108,8 @@ class Template extends RuntimeException
 
 	/**
 	 *	Returns not used Labels.
-	 *	@access	  public
-	 *	@return	  array		{@link $labels}
+	 *	@access		public
+	 *	@return		array		{@link $labels}
 	 */
 	public function getNotUsedLabels(): array
 	{
