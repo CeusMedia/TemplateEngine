@@ -327,14 +327,14 @@ class Template
 	/**
 	 *	Adds an array recursive and returns number of added elements.
 	 *	@access		public
-	 *	@param		string		$name			Key of array
-	 *	@param		array		$data			Values of array
-	 *	@param		array		$steps			Steps within recursion
-	 *	@param		bool		$overwrite		Flag: overwrite existing tag
+	 *	@param		string			$name			Key of array
+	 *	@param		array|object	$data			Values of array
+	 *	@param		array			$steps			Steps within recursion
+	 *	@param		bool			$overwrite		Flag: overwrite existing tag
 	 *	@return		int
 	 *	@throws		ReflectionException
 	 */
-	public function addArrayRecursive( string $name, array $data, array $steps = [], bool $overwrite = FALSE ): int
+	public function addArrayRecursive( string $name, $data, array $steps = [], bool $overwrite = FALSE ): int
 	{
 		$number		= 0;
 		$steps[]	= $name;
