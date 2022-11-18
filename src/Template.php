@@ -47,6 +47,7 @@ use ReflectionException;
 use ReflectionObject;
 use RuntimeException;
 
+use Traversable;
 use function method_exists;
 
 /**
@@ -312,8 +313,10 @@ class Template
 			$key		= $property->getName();
 			$methodName	= 'get'.ucfirst( $key );
 			if( $property->isPublic() )
+				/** @var string|float|integer $value */
 				$value	= $property->getValue( $object );
 			else if( $reflection->hasMethod( $methodName ) )
+				/** @var string|float|integer $value */
 				$value	= MethodFactory::staticCallObjectMethod( $object, $methodName );
 			else
 				continue;
@@ -338,15 +341,17 @@ class Template
 	{
 		$number		= 0;
 		$steps[]	= $name;
-		foreach( $data as $key => $value ){
-			$isListObject	= $value instanceof ArrayObject || $value instanceof Dictionary;
-			if( is_array( $value ) || $isListObject  ){
-				$number	+= $this->addArrayRecursive( $key, $value, $steps );
-			}
-			else{
-				$key	= implode( ".", $steps ).".".$key;
-				$this->addElement( $key, $value, $overwrite );
-				$number ++;
+		if( is_array( $data) || $data instanceof Traversable ){
+			foreach( $data as $key => $value ){
+				$isListObject	= $value instanceof ArrayObject || $value instanceof Dictionary;
+				if( is_array( $value ) || $isListObject  ){
+					$number	+= $this->addArrayRecursive( $key, $value, $steps );
+				}
+				else{
+					$key	= implode( ".", $steps ).".".$key;
+					$this->addElement( $key, $value, $overwrite );
+					$number ++;
+				}
 			}
 		}
 		return $number;
