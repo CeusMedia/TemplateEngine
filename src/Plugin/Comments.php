@@ -42,6 +42,9 @@ use CeusMedia\TemplateEngine\PluginAbstract;
  */
 class Comments extends PluginAbstract
 {
+	/**	@var		string		$keyword		Plugin keyword */
+	protected string $keyword	= 'comments';
+
 	/**	@var		array		$options		Plugin options */
 	protected array $options	= [
 		'remove'	=> false,

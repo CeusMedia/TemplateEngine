@@ -43,6 +43,9 @@ use RuntimeException;
  */
 class Tidy extends PluginAbstract
 {
+	/**	@var		string		$keyword		Plugin keyword */
+	protected string $keyword	= 'tidy';
+
 	/**	@var		array		$options		Plugin options */
 	protected array $options			= [
 		'show-body-only'				=> true,

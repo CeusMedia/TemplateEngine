@@ -42,6 +42,9 @@ use CeusMedia\TemplateEngine\PluginAbstract;
  */
 class Optional extends PluginAbstract
 {
+	/**	@var		string		$keyword		Plugin keyword */
+	protected string $keyword	= 'optional';
+
 	/**	@var		array		$options		Plugin options */
 	protected array $options			= [
 		'remove'	=> false
