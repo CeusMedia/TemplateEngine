@@ -96,7 +96,7 @@ class Matrix extends PluginAbstract
 		$value	= NULL;
 		for( $i=0; $i<count( $matches[0] ); $i++ )
 			if( $this->extractValue( $matches[2][$i], $value ) )
-				$template	= str_replace( $matches[0][$i], $value, $template );
+				$template	= str_replace( $matches[0][$i], $value ?? '', $template );
 		return $template;
 	}
 

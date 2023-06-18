@@ -411,8 +411,8 @@ class Template
 		$content = explode( "\n", $content );
 		foreach( $content as $row ){
 			if( FALSE !== preg_match( '/\s*@(\S+)?\s+(.*)/', $row, $out ) ){
-				if( $unique )
-					$list[$out[1]] = $out[2];
+				if( !array_key_exists( $out[1], $list ) || !is_array( $list[$out[1]] ) )
+					$list[$out[1]]	= [$out[2]];
 				else
 					$list[$out[1]][] = $out[2];
 			}
