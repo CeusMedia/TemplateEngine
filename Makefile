@@ -3,7 +3,7 @@ composer-install:
 	@test ! -f vendor/autoload.php && composer install --no-dev || true
 
 composer-install-dev:
-	@test ! -d vendor/phpunit/phpunit && composer install || true
+	@test ! -d vendor/bin/phpunit && composer install || true
 
 composer-update:
 	@composer update --no-dev
