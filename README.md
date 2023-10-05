@@ -4,8 +4,8 @@ A simple template engine for PHP.
 
 ## Versions
 
-Until version <code>0.4.1</code>, support for PHP 7.4+ and CeusMedia::Common 0.9+. 
-This version <code>0.5.0</code>, support for PHP 8.1+ and CeusMedia::Common 1.0+. 
+Until version <code>0.4.1</code>, support for PHP 7.4+ and CeusMedia::Common 0.9+.  
+This version <code>0.5.0</code>, support for PHP 8.1+ and CeusMedia::Common 1.0+.  
 
 ## Facts
 - **logic-less** - no conditions or loop
