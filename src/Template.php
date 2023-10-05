@@ -104,7 +104,7 @@ class Template
 	 *	@param		array			$keywords	List of keywords to bind filter on
 	 *	@return		void
 	 */
-	public static function addFilter( FilterInterface $filter, array $keywords = [] )
+	public static function addFilter( FilterInterface $filter, array $keywords = [] ): void
 	{
 		if( 0 === count( $keywords ) )
 			$keywords	= $filter->getKeywords();
@@ -121,7 +121,7 @@ class Template
 	 *	@param		PluginInterface	$plugin		Instance of filter
 	 *	@return		void
 	 */
-	public static function addPlugin( PluginInterface $plugin )
+	public static function addPlugin( PluginInterface $plugin ): void
 	{
 		$keyword	= $plugin->getKeyword();
 		$priority	= $plugin->getPriority();
@@ -153,7 +153,7 @@ class Template
 	 *	@param		array		$keywords	List of keywords to bind filter to
 	 *	@return		void
 	 */
-	public static function registerFilter( string $className, array $keywords )
+	public static function registerFilter( string $className, array $keywords ): void
 	{
 		if( 0 === count( $keywords ) )
 			throw new InvalidArgumentException( 'No filter keywords given' );
@@ -207,7 +207,7 @@ class Template
 	 *	@param		string				$prefix			Prefix for keys in cache.
 	 *	@return		void
 	 */
-	public static function setCache( CacheInterface $storage, string $prefix = '' )
+	public static function setCache( CacheInterface $storage, string $prefix = '' ): void
 	{
 		self::$cache		= $storage;
 		self::$cachePrefix	= $prefix;
@@ -219,7 +219,7 @@ class Template
 	 *	@param		string		$path		Path to templates
 	 *	@return		void
 	 */
-	public static function setTemplatePath( string $path )
+	public static function setTemplatePath( string $path ): void
 	{
 		self::$pathTemplates	= (string) preg_replace( "@(.+)/$@", "\\1/", $path );
 	}
@@ -365,7 +365,7 @@ class Template
 	 *	@return		void
 	 *	@throws		ReflectionException
 	 */
-	public function addElement( string $tag, $element, bool $overwrite = FALSE )
+	public function addElement( string $tag, $element, bool $overwrite = FALSE ): void
 	{
 		$this->add( [$tag => $element], $overwrite );
 	}
@@ -380,7 +380,7 @@ class Template
 	 *	@return		void
 	 *	@throws		ReflectionException
 	 */
-	public function addTemplate( string $tag, string $fileName, array $elements = [], bool $overwrite = FALSE )
+	public function addTemplate( string $tag, string $fileName, array $elements = [], bool $overwrite = FALSE ): void
 	{
 		$this->addElement( $tag, new self( $fileName, $elements ), $overwrite );
 	}
@@ -411,10 +411,14 @@ class Template
 		$content = explode( "\n", $content );
 		foreach( $content as $row ){
 			if( FALSE !== preg_match( '/\s*@(\S+)?\s+(.*)/', $row, $out ) ){
-				if( !array_key_exists( $out[1], $list ) || !is_array( $list[$out[1]] ) )
-					$list[$out[1]]	= [$out[2]];
-				else
-					$list[$out[1]][] = $out[2];
+				if( $unique )
+					$list[$out[1]] = $out[2];
+				else{
+					if( !array_key_exists( $out[1], $list ) || !is_array( $list[$out[1]] ) )
+						$list[$out[1]]	= [$out[2]];
+					else
+						$list[$out[1]][] = $out[2];
+				}
 			}
 		}
 		return $list;
@@ -567,7 +571,7 @@ class Template
 	 *	@throws		TemplateException
 	 *	@todo		make limit configurable
 	 */
-	protected static function checkLoadLimit( string $filePath )
+	protected static function checkLoadLimit( string $filePath ): void
 	{
 		if( !in_array( $filePath, self::$loaded, TRUE ) )											//  file not found in load list
 			self::$loaded[$filePath] = 1;															//  append file to load list
