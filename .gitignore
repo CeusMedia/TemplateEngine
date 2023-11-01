@@ -1,5 +1,6 @@
 /vendor
 /composer.lock
+/doc
 /.idea
 /.phpunit.cache
-/doc
+/.phpunit.result.cache

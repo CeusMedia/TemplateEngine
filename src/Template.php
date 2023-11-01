@@ -360,7 +360,7 @@ class Template
 	/**
 	 *	Adds one Element.
 	 *	@param		string							$tag		Tag name
-	 *	@param		string|integer|float|Template	$element	...
+	 *	@param		string|integer|float|array|object|Template	$element	...
 	 *	@param		boolean							$overwrite	if set to TRUE, it will overwrite an existing element with the same label
 	 *	@return		void
 	 *	@throws		ReflectionException
