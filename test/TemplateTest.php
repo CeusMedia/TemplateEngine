@@ -29,6 +29,7 @@ use ReflectionException;
  *	@package		test
  *	@author			David Seebacher <dseebacher@gmail.com>
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
+ *	@coversDefaultClass \CeusMedia\TemplateEngine\Template
  */
 class TemplateTest extends BaseCase
 {
@@ -75,8 +76,9 @@ class TemplateTest extends BaseCase
 
 	/**
 	 * @return void
-	 * @covers Template::getElements
-	 */
+	 * @covers ::getElements
+	 * @covers \CeusMedia\TemplateEngine\Template
+	 * /	 */
 	public function testInitiallyNoElements(): void
 	{
 		$size	= sizeof( $this->template->getElements() );
@@ -85,7 +87,8 @@ class TemplateTest extends BaseCase
 
 	/**
 	 * @return void
-	 * @covers Template::add
+	 * @covers ::add
+	 * @covers \CeusMedia\TemplateEngine\Template
 	 */
 	public function testAdd1(): void
 	{
@@ -96,7 +99,8 @@ class TemplateTest extends BaseCase
 
 	/**
 	 * @return void
-	 * @covers Template::add
+	 * @covers ::add
+	 * @covers \CeusMedia\TemplateEngine\Template
 	 */
 	public function testAdd2(): void
 	{
@@ -117,7 +121,8 @@ class TemplateTest extends BaseCase
 
 	/**
 	 * @return void
-	 * @covers Template::add
+	 * @covers ::add
+	 * @covers \CeusMedia\TemplateEngine\Template
 	 */
 	public function testAdd3(): void
 	{
@@ -136,8 +141,9 @@ class TemplateTest extends BaseCase
 
 	/**
 	 * @return void
-	 * @covers Template::addElement
-	 * @covers Template::getElement
+	 * @covers ::addElement
+	 * @covers ::getElements
+	 * @covers \CeusMedia\TemplateEngine\Template
 	 */
 	public function testAddElement(): void
 	{
@@ -150,8 +156,9 @@ class TemplateTest extends BaseCase
 
 	/**
 	 * @return void
-	 * @covers Template::addObject
-	 * @covers Template::getElements
+	 * @covers ::addObject
+	 * @covers ::getElements
+	 * @covers \CeusMedia\TemplateEngine\Template
 	 */
 	public function testAddObject1(): void
 	{
@@ -171,8 +178,9 @@ class TemplateTest extends BaseCase
 
 	/**
 	 * @return void
-	 * @covers Template::addObject
-	 * @covers Template::getElements
+	 * @covers ::addObject
+	 * @covers ::getElements
+	 * @covers \CeusMedia\TemplateEngine\Template
 	 */
 	public function testAddObject2(): void
 	{
@@ -193,8 +201,9 @@ class TemplateTest extends BaseCase
 
 	/**
 	 * @return void
-	 * @covers Template::addObject
-	 * @covers Template::getElements
+	 * @covers ::addObject
+	 * @covers ::getElements
+	 * @covers \CeusMedia\TemplateEngine\Template
 	 */
 	public function testAddObject3(): void
 	{
@@ -215,7 +224,8 @@ class TemplateTest extends BaseCase
 
 	/**
 	 * @return void
-	 * @covers Template::getElements
+	 * @covers ::getElements
+	 * @covers \CeusMedia\TemplateEngine\Template
 	 */
 	public function testGetElements(): void
 	{
@@ -229,9 +239,12 @@ class TemplateTest extends BaseCase
 	/**
 	 *	Tests Tags only
 	 * @return void
-	 * @covers Template::addElement
-	 * @covers Template::render
-	 * @covers Template::setTemplate
+	 * @covers ::addElement
+	 * @covers ::render
+	 * @covers ::setTemplate
+	 * @covers \CeusMedia\TemplateEngine\PluginAbstract
+	 * @covers \CeusMedia\TemplateEngine\Plugin\Comments
+	 * @covers \CeusMedia\TemplateEngine\Template
 	 */
 	public function testRender1(): void
 	{
@@ -246,8 +259,11 @@ class TemplateTest extends BaseCase
 	/**
 	 *	Tests Comments only
 	 * @return void
-	 * @covers Template::render
-	 * @covers Template::setTemplate
+	 * @covers ::render
+	 * @covers ::setTemplate
+	 * @covers \CeusMedia\TemplateEngine\PluginAbstract
+	 * @covers \CeusMedia\TemplateEngine\Plugin\Comments
+	 * @covers \CeusMedia\TemplateEngine\Template
 	 */
 	public function testRender2(): void
 	{
@@ -264,9 +280,12 @@ class TemplateTest extends BaseCase
 	/**
 	 *	Tests Nested Data Types only
 	 * @return void
-	 * @covers Template::addElement
-	 * @covers Template::render
-	 * @covers Template::setTemplate
+	 * @covers ::addElement
+	 * @covers ::render
+	 * @covers ::setTemplate
+	 * @covers \CeusMedia\TemplateEngine\PluginAbstract
+	 * @covers \CeusMedia\TemplateEngine\Plugin\Comments
+	 * @covers \CeusMedia\TemplateEngine\Template
 	 */
 	public function testRender3(): void
 	{
@@ -282,9 +301,12 @@ class TemplateTest extends BaseCase
 	 * @return void
 	 * @throws ReflectionException
 	 * @return void
-	 * @covers Template::addElement
-	 * @covers Template::render
-	 * @covers Template::setTemplate
+	 * @covers ::addElement
+	 * @covers ::render
+	 * @covers ::setTemplate
+	 * @covers \CeusMedia\TemplateEngine\PluginAbstract
+	 * @covers \CeusMedia\TemplateEngine\Plugin\Comments
+	 * @covers \CeusMedia\TemplateEngine\Template
 	 */
 	public function testRender4(): void
 	{
@@ -300,7 +322,10 @@ class TemplateTest extends BaseCase
 	/**
 	 * @return void
 	 * @throws ReflectionException
-	 * @covers Template::renderFile
+	 * @covers ::renderFile
+	 * @covers \CeusMedia\TemplateEngine\PluginAbstract
+	 * @covers \CeusMedia\TemplateEngine\Plugin\Comments
+	 * @covers \CeusMedia\TemplateEngine\Template
 	 */
 	public function testRenderFile(): void
 	{
