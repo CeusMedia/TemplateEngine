@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd"
-         bootstrap="vendor/autoload.php"
+         bootstrap="../vendor/autoload.php"
          cacheDirectory=".phpunit.cache"
          executionOrder="depends,defects"
          requireCoverageMetadata="true"
@@ -9,15 +9,29 @@
          beStrictAboutOutputDuringTests="true"
          failOnRisky="true"
          failOnWarning="true">
+    <coverage>
+        <report>
+            <clover outputFile="../doc/test/coverage.clover.xml"/>
+            <html outputDirectory="../doc/test/Coverage" lowUpperBound="35" highLowerBound="70"/>
+            <php outputFile="../doc/test/coverage.php.serialized"/>
+        </report>
+    </coverage>
+
     <testsuites>
         <testsuite name="units">
-            <directory>test</directory>
+            <directory>../test</directory>
         </testsuite>
     </testsuites>
 
     <source restrictDeprecations="true" restrictNotices="true" restrictWarnings="true">
         <include>
-            <directory>src</directory>
+            <directory>../src</directory>
         </include>
     </source>
+
+    <logging>
+        <junit outputFile="../doc/test/logfile.xml"/>
+        <testdoxHtml outputFile="../doc/test/testdox.html"/>
+        <testdoxText outputFile="../doc/test/testdox.txt"/>
+    </logging>
 </phpunit>
