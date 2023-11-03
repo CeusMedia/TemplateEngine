@@ -9,3 +9,4 @@ parameters:
 		- ../src
 		- ../demo
 	checkMissingIterableValueType: false
+	treatPhpDocTypesAsCertain: false
