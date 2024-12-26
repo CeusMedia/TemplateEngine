@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  *	...
  *
- *	Copyright (c) 2011-2023 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2011-2024 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ declare(strict_types=1);
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011-2023 Christian Würker
+ *	@copyright		2011-2024 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
@@ -41,7 +41,7 @@ use Throwable;
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011-2023 Christian Würker
+ *	@copyright		2011-2024 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
@@ -97,21 +97,22 @@ class File extends PluginAbstract
 		$matches	= [];
 		$pattern	= '/<(\?)?%'.$this->keyword.'\((.+)\)(\|.+)?%>/U';
 		preg_match_all( $pattern, $template, $matches );
-		if( !$matches[0] )
+		if( '' === ( $matches[0] ?? '' ) )
 			return $template;
 
 		for( $i=0; $i<count( $matches[0] ); $i++ ){
 			try{
 				$hash		= 'STE'.uniqid();														//  create unique hash value
+				/** @var string $content */
 				$content	= FileReader::load( $this->getFileNameFromKey( $matches[2][$i] ) );		//  load file content
 				$content	= preg_replace( '/<%(.+)%>/U', '&lt;%$1%&gt;', $content );				//  escape tags in content
 				$elements[$hash]	= $content;														//  store file content in elements by its hash value as new template tag
 				$value		= '<%?'.$hash.$matches[3][$i].'%>';										//  replacement for tag is a hashtag
 			}
 			catch( Throwable $e ){																	//  catch all exceptions
-				if( $this->options['mode'] == 'strict' )											//  strict error mode
-					throw new IoException( 'Invalid file', 0, $matches[2][$i], $e );				//  throw an exception
-				else if( $this->options['mode'] == 'verbose' )										//  verbose error mode
+				if( 'strict' === $this->options['mode'] )											//  strict error mode
+					throw new IoException( 'Invalid file', 0, $e, $matches[2][$i] );				//  throw an exception
+				else if( 'verbose' === $this->options['mode'] )										//  verbose error mode
 					$value	= 'Missing file: '.$matches[2][$i];										//
 				else
 					$value	= '';
