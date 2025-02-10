@@ -111,14 +111,14 @@ class Matrix extends PluginAbstract
 	{
 		$depth	= $this->options['depth'];
 		$parts	= explode( $this->options['delimiter'], $key );
-		if( count( $parts ) != $depth )
+		if( count( $parts ) !== $depth )
 			throw new InvalidArgumentException( 'Depth ('.count( $parts ).') of key ('.$key.') does not match matrix depth ('.$depth.')' );
 		$data	= $this->options['data'];
 		for( $i=0; $i<$depth; $i++ ){
 			if( !isset( $data[$parts[$i]] ) ){
-				if( $this->options['mode'] == 'strict' )
+				if( 'strict' === $this->options['mode'] )
 					throw new RuntimeException( 'Invalid: '.implode( '.', array_slice( $parts, 0, $i + 1) ) );
-				else if( $this->options['mode'] == 'verbose' )
+				else if( 'verbose' === $this->options['mode'] )
 					$data	= 'Missing: '.$key;
 				else
 					$data	= '';

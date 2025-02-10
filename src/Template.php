@@ -101,7 +101,7 @@ class Template
 	 *	You can use 'registerFilter' to avoid building an instance.
 	 *	@access		public
 	 *	@param		FilterInterface	$filter		Instance of filter
-	 *	@param		array			$keywords	List of keywords to bind filter on
+	 *	@param		array<string>	$keywords	List of keywords to bind filter on
 	 *	@return		void
 	 */
 	public static function addFilter( FilterInterface $filter, array $keywords = [] ): void
@@ -128,7 +128,7 @@ class Template
 		foreach( self::$plugins as $plugins )
 			foreach( $plugins as $pluginInstance )
 				if( $pluginInstance instanceof MatrixPlugin )
-					if( $pluginInstance->getKeyword() == $keyword )
+					if( $pluginInstance->getKeyword() === $keyword )
 						throw new RuntimeException( 'Plugin keyword "'.$keyword.'" is already taken by another plugin' );
 		if( !isset( self::$plugins[$priority] ) )
 			self::$plugins[$priority]	= [];
@@ -626,7 +626,7 @@ class Template
 		ksort( self::$plugins );
 		foreach( self::$plugins as $plugins )														//  iterate plugins priorities
 			foreach( $plugins as $plugin )															//  iterate plugins in priority
-				if( $plugin->getType() == $type )													//  plugin type is matching
+				if( $plugin->getType() === $type )													//  plugin type is matching
 					$content	= $plugin->work( $content, $this->elements );						//  apply plugin on template content
 		return $content;
 	}

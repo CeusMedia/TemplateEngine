@@ -63,15 +63,15 @@ interface FilterInterface
 	/**
 	 *	Returns a list of keywords of this filter.
 	 *	@access		public
-	 *	@return		array
+	 *	@return		array<string>
 	 */
 	public function getKeywords(): array;
 
 	/**
 	 *	Sets keywords for this filter.
 	 *	@access		public
-	 *	@param		array		$keywords		List of filter keywords
-	 *	@param		boolean		$append			Flag: append keywords, otherwise replace
+	 *	@param		array<string>	$keywords		List of filter keywords
+	 *	@param		boolean			$append			Flag: append keywords, otherwise replace
 	 *	@return		FilterAbstract
 	 */
 	public function setKeywords( array $keywords, bool $append = FALSE ): FilterAbstract;

@@ -43,7 +43,7 @@ use CeusMedia\Common\Alg\Text\Filter as TextFilter;
  */
 class Strip extends FilterAbstract
 {
-	/**	@var		array		$keywords		Keywords to bind filter to on register */
+	/**	@var		array<string>		$keywords		Keywords to bind filter to on register */
 	protected array $keywords	= [ 'strip' ];
 
 	/**

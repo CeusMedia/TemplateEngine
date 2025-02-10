@@ -45,8 +45,8 @@ use CeusMedia\Common\ADT\JSON\Pretty as JsonPretty;
  */
 class Code extends FilterAbstract
 {
-	/**	@var		array		$keywords		Keywords to bind filter to on register */
-	protected array $keywords	= ['code'];
+	/**	@var		array<string>	$keywords		Keywords to bind filter to on register */
+	protected array $keywords		= ['code'];
 
 	/**
 	 *	Apply filter to content.
