@@ -4,7 +4,7 @@ declare(strict_types=1);
 /**
  *	...
  *
- *	Copyright (c) 2011-2023 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2011-2024 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -22,22 +22,22 @@ declare(strict_types=1);
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011-2023 Christian Würker
+ *	@copyright		2011-2024 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
 
 namespace CeusMedia\TemplateEngine\Plugin;
 
+use CeusMedia\Common\Exception\MissingExtension as MissingExtensionException;
 use CeusMedia\TemplateEngine\PluginAbstract;
-use RuntimeException;
 
 /**
  *	...
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2011-2023 Christian Würker
+ *	@copyright		2011-2024 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
@@ -103,16 +103,12 @@ class Tidy extends PluginAbstract
 	 *	@param		string		$template		Template content
 	 *	@param		array		$elements		Reference to elements assigned to template
 	 *	@return		string
-	 *	@throws		RuntimeException			if extension 'tidy' is not installed
+	 *	@throws		MissingExtensionException	if extension 'tidy' is not installed
 	 */
 	public function work( string $template, array &$elements ): string
 	{
 		if( !extension_loaded( 'tidy' ) )
-			throw new RuntimeException( 'tidy extension not loaded' );
-		$tidy = new \tidy;
-//    	$c	 = new Alg_Time_Clock();
-		$template	= $tidy->repairString( $template, $this->options, 'utf8' );
-//		remark( $c->stop() );
-		return $template;
+			throw MissingExtensionException::create( 'tidy extension not loaded' );
+		return \tidy::repairString( $template, $this->options, 'utf8' );
 	}
 }

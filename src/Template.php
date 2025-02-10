@@ -7,7 +7,7 @@ declare(strict_types=1);
 /**
  *	Template Class.
  *
- *	Copyright (c) 2007-2023 Christian Würker (ceusmedia.de)
+ *	Copyright (c) 2007-2024 Christian Würker (ceusmedia.de)
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@ declare(strict_types=1);
  *	@package		CeusMedia_TemplateEngine
  *	@author			David Seebacher <dseebacher@gmail.com>
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2007-2023 Christian Würker
+ *	@copyright		2007-2024 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
@@ -56,7 +56,7 @@ use function method_exists;
  *	@package		CeusMedia_TemplateEngine
  *	@author			David Seebacher <dseebacher@gmail.com>
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
- *	@copyright		2007-2023 Christian Würker
+ *	@copyright		2007-2024 Christian Würker
  *	@license		http://www.gnu.org/licenses/gpl-3.0.txt GPL 3
  *	@link			https://github.com/CeusMedia/TemplateEngine
  */
@@ -330,14 +330,14 @@ class Template
 	/**
 	 *	Adds an array recursive and returns number of added elements.
 	 *	@access		public
-	 *	@param		string			$name			Key of array
-	 *	@param		array|object	$data			Values of array
-	 *	@param		array			$steps			Steps within recursion
-	 *	@param		bool			$overwrite		Flag: overwrite existing tag
+	 *	@param		string|int|float	$name			Key of array
+	 *	@param		array|object		$data			Values of array
+	 *	@param		array				$steps			Steps within recursion
+	 *	@param		bool				$overwrite		Flag: overwrite existing tag
 	 *	@return		int
 	 *	@throws		ReflectionException
 	 */
-	public function addArrayRecursive( string $name, $data, array $steps = [], bool $overwrite = FALSE ): int
+	public function addArrayRecursive( string|int|float $name, $data, array $steps = [], bool $overwrite = FALSE ): int
 	{
 		$number		= 0;
 		$steps[]	= $name;
@@ -552,6 +552,8 @@ class Template
 
 		if( !file_exists( $filePath ) )																//  file is not existing
 			throw new TemplateException( TemplateException::FILE_NOT_FOUND, $filePath );		//  break with exception
+
+		/** @var string $content */
 		$content	= FileReader::load( $filePath );												//  load file content
 		if( NULL !== self::$cache )																	//  cache is enabled
 			self::$cache->set( self::$cachePrefix.$filePath, $content );						//  store file content in cache
