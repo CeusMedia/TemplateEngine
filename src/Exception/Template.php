@@ -46,10 +46,10 @@ use Throwable;
  */
 class Template extends RuntimeException
 {
-	public const FILE_NOT_FOUND			= 0;
-	public const FILE_LABELS_MISSING	= 1;
-	public const LABELS_MISSING			= 2;
-	public const FILE_LOAD_LIMIT		= 3;
+	public const int FILE_NOT_FOUND			= 0;
+	public const int FILE_LABELS_MISSING	= 1;
+	public const int LABELS_MISSING			= 2;
+	public const int FILE_LOAD_LIMIT		= 3;
 
 	/**	@var		array<int,string>	$messages		Map of Exception Messages, can be overwritten statically */
 	public static array $messages	= [
@@ -82,13 +82,13 @@ class Template extends RuntimeException
 		switch( $code ){
 			case self::FILE_NOT_FOUND:
 			case self::FILE_LOAD_LIMIT:
-				$message		= sprintf( self::$messages[$code], $fileName );
+				$message	= sprintf( self::$messages[$code], $fileName );
 				break;
 			case self::FILE_LABELS_MISSING:
-				$message		= sprintf( self::$messages[self::FILE_LABELS_MISSING], $fileName, $tagList );
+				$message	= sprintf( self::$messages[self::FILE_LABELS_MISSING], $fileName, $tagList );
 				break;
 			case self::LABELS_MISSING:
-				$message		= sprintf( self::$messages[self::LABELS_MISSING], $tagList );
+				$message	= sprintf( self::$messages[self::LABELS_MISSING], $tagList );
 				break;
 			default:
 				throw new DomainException( 'Invalid template exception code' );

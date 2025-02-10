@@ -46,12 +46,12 @@ class Optional extends PluginAbstract
 	protected string $keyword	= 'optional';
 
 	/**	@var		array		$options		Plugin options */
-	protected array $options			= [
+	protected array $options	= [
 		'remove'	=> false
 	];
 
 	/**	@var		string		$type			Plugin type (pre|post) */
-	protected string $type				= 'pre';
+	protected string $type		= 'pre';
 
 	/**
 	 *	Apply plugin to template content.

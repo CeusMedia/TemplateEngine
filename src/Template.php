@@ -41,13 +41,13 @@ use CeusMedia\Common\FS\File\Reader as FileReader;
 use CeusMedia\TemplateEngine\Exception\Template as TemplateException;
 use CeusMedia\TemplateEngine\Plugin\Matrix as MatrixPlugin;
 use Psr\SimpleCache\CacheInterface;
+use Psr\SimpleCache\InvalidArgumentException as SimpleCacheInvalidArgumentException;
 
 use InvalidArgumentException;
 use ReflectionException;
 use ReflectionObject;
 use RuntimeException;
 
-use Traversable;
 use function method_exists;
 
 /**
@@ -172,6 +172,7 @@ class Template
 	 *	@param		array		$elements		List of Elements {@link add()}
 	 *	@return		string
 	 *	@throws		ReflectionException
+	 *	@throws		SimpleCacheInvalidArgumentException
 	 */
 	public static function renderFile( string $fileName, array $elements = [] ): string
 	{
@@ -231,6 +232,7 @@ class Template
 	 *	@param		array		$elements		List of Elements {@link add()}
 	 *	@return		void
 	 *	@throws		ReflectionException
+	 *	@throws		SimpleCacheInvalidArgumentException
 	 */
 	public function __construct( ?string $fileName = NULL, array $elements = [] )
 	{
@@ -331,27 +333,25 @@ class Template
 	 *	Adds an array recursive and returns number of added elements.
 	 *	@access		public
 	 *	@param		string|int|float	$name			Key of array
-	 *	@param		array|object		$data			Values of array
+	 *	@param		iterable			$data			Values of array
 	 *	@param		array				$steps			Steps within recursion
 	 *	@param		bool				$overwrite		Flag: overwrite existing tag
 	 *	@return		int
 	 *	@throws		ReflectionException
 	 */
-	public function addArrayRecursive( string|int|float $name, $data, array $steps = [], bool $overwrite = FALSE ): int
+	public function addArrayRecursive( string|int|float $name, iterable $data, array $steps = [], bool $overwrite = FALSE ): int
 	{
 		$number		= 0;
 		$steps[]	= $name;
-		if( is_array( $data) || $data instanceof Traversable ){
-			foreach( $data as $key => $value ){
-				$isListObject	= $value instanceof ArrayObject || $value instanceof Dictionary;
-				if( is_array( $value ) || $isListObject  ){
-					$number	+= $this->addArrayRecursive( $key, $value, $steps );
-				}
-				else{
-					$key	= implode( ".", $steps ).".".$key;
-					$this->addElement( $key, $value, $overwrite );
-					$number ++;
-				}
+		foreach( $data as $key => $value ){
+			$isListObject	= $value instanceof ArrayObject || $value instanceof Dictionary;
+			if( is_array( $value ) || $isListObject  ){
+				$number	+= $this->addArrayRecursive( $key, $value, $steps );
+			}
+			else{
+				$key	= implode( ".", $steps ).".".$key;
+				$this->addElement( $key, $value, $overwrite );
+				$number ++;
 			}
 		}
 		return $number;
@@ -359,13 +359,13 @@ class Template
 
 	/**
 	 *	Adds one Element.
-	 *	@param		string							$tag		Tag name
-	 *	@param		string|integer|float|Template	$element	...
-	 *	@param		boolean							$overwrite	if set to TRUE, it will overwrite an existing element with the same label
+	 *	@param		string						$tag		Tag name
+	 *	@param		string|int|float|Template	$element	...
+	 *	@param		boolean						$overwrite	if set to TRUE, it will overwrite an existing element with the same label
 	 *	@return		void
 	 *	@throws		ReflectionException
 	 */
-	public function addElement( string $tag, $element, bool $overwrite = FALSE ): void
+	public function addElement( string $tag, string|int|float|Template $element, bool $overwrite = FALSE ): void
 	{
 		$this->add( [$tag => $element], $overwrite );
 	}
@@ -379,6 +379,7 @@ class Template
 	 *	@param		boolean		$overwrite	if set to TRUE, it will overwrite an existing element with the same label
 	 *	@return		void
 	 *	@throws		ReflectionException
+	 *	@throws		SimpleCacheInvalidArgumentException
 	 */
 	public function addTemplate( string $tag, string $fileName, array $elements = [], bool $overwrite = FALSE ): void
 	{
@@ -472,8 +473,8 @@ class Template
 	/**
 	 *	Renders output of given template file or string with applied elements, filters and plugins.
 	 *	All labels will be replaced with appropriate elements.
-	 *	All registered plugins will ... (be applied before and after label replacement.
-	 *	All registered filters will ... (be applied
+	 *	All registered plugins will be applied before and after label replacement.
+	 *	All registered filters will be applied on replacement of all registered elements.
 	 *	If a non-optional label wasn't specified, the method will throw a Template Exception
 	 *	@access		public
 	 *	@return		string
@@ -483,7 +484,7 @@ class Template
 		$out			= $this->template;															//  local copy of set template content
 		$callbackFilter	= [$this, 'applyFilters'];													//  create callback for applying filters on replacement of element labels
 
-		$this->applyPlugins( $out );																//  apply pre processing plugins
+		$this->applyPlugins( $out );														//  apply pre processing plugins
 
 		foreach( $this->elements as $label => $element ){											//  iterate over all registered element containers
 			$tmp = '';																				//
@@ -497,24 +498,24 @@ class Template
 				$tmp	.= $element;
 //			}
 			$this->tmp	= $tmp;																		//  store current temporary element content for filters
-			$pattern	= '/<%(\?)?('.preg_quote( $label, '/' ).')(\|.+)?%>/';						//  create regular expression for element label with filter support
+			$pattern	= '/<%(\?)?('.preg_quote( $label, '/' ).')(\|.+)?%>/';				//  create regular expression for element label with filter support
 			$out		= preg_replace_callback( $pattern, $callbackFilter, $out );					//  realize placeholder, apply filters on content
  		}
-		$out = preg_replace( '/<%\?.*%>/U', '', $out );    											//  remove left over optional placeholders
-		$out = preg_replace( '/\n\s+\n/', "\n", $out );												//  remove double line breaks
+		$out = preg_replace( '/<%\?.*%>/U', '', $out );    						//  remove left over optional placeholders
+		$out = preg_replace( '/\n\s+\n/', "\n", $out );							//  remove double line breaks
 
-		$this->applyPlugins( $out, 'post' );														//  apply post-processing plugins
+		$this->applyPlugins( $out, 'post' );											//  apply post-processing plugins
 
-		$out = preg_replace( '/<%\??\w+\(.+\)%>/U', '', $out );    									//  remove left over plugin calls @todo handle this with exceptions later
+		$out = preg_replace( '/<%\??\w+\(.+\)%>/U', '', $out );    				//  remove left over plugin calls @todo handle this with exceptions later
 
-		$tags = [];																			//  create container for left over placeholders
-		if( preg_match_all( '/<%.*%>/U', $out, $tags ) === 0 )										//  no more placeholders left over
+		$tags = [];																					//  create container for left over placeholders
+		if( preg_match_all( '/<%.*%>/U', $out, $tags ) === 0 )						//  no more placeholders left over
 			return $out; 																			//  return final result
 
-		$tags	= array_shift( $tags );																//
+		$tags	= array_shift( $tags );														//
 		foreach( $tags as $key => $value )															//
-			$tags[$key]	= preg_replace( '@(<%\??)|%>@', "", $value );								//
-		if( NULL !== $this->fileName )																		//
+			$tags[$key]	= preg_replace( '@(<%\??)|%>@', "", $value );				//
+		if( NULL !== $this->fileName )																//
 			throw new TemplateException(
 				TemplateException::FILE_LABELS_MISSING,
 				$this->fileName,
@@ -533,6 +534,7 @@ class Template
 	 *	@return		boolean
 	 *	@throws		TemplateException			if template file is not existing
 	 *	@throws		TemplateException			if file limit is reached
+	 *	@throws		SimpleCacheInvalidArgumentException
 	 */
 	public function setTemplate( string $fileName ): bool
 	{
@@ -555,8 +557,7 @@ class Template
 
 		/** @var string $content */
 		$content	= FileReader::load( $filePath );												//  load file content
-		if( NULL !== self::$cache )																	//  cache is enabled
-			self::$cache->set( self::$cachePrefix.$filePath, $content );						//  store file content in cache
+		self::$cache?->set( self::$cachePrefix.$filePath, $content );							//  store file content in cache
 
 		$this->template = $content;																	//  set template content
 		return TRUE;																				//  return with positive result

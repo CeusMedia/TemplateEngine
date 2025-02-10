@@ -31,6 +31,8 @@ namespace CeusMedia\TemplateEngine\Plugin;
 
 use CeusMedia\TemplateEngine\PluginAbstract;
 use CeusMedia\TemplateEngine\Template;
+use Psr\SimpleCache\InvalidArgumentException as SimpleCacheInvalidArgumentException;
+use ReflectionException;
 
 /**
  *	...
@@ -55,6 +57,8 @@ class Inclusion extends PluginAbstract
 	 *	@param		string		$template		Template content
 	 *	@param		array		$elements		Reference to elements assigned to template
 	 *	@return		string
+	 *	@throws		ReflectionException
+	 *	@throws		SimpleCacheInvalidArgumentException
 	 */
 	public function work( string $template, array &$elements ): string
 	{

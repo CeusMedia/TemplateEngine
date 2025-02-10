@@ -107,7 +107,7 @@ class Matrix extends PluginAbstract
 	 *	@param		mixed		$value		Reference to value for matrix key (if existing)
 	 *	@return		boolean
 	 */
-	protected function extractValue( string $key, &$value ): bool
+	protected function extractValue( string $key, mixed &$value ): bool
 	{
 		$depth	= $this->options['depth'];
 		$parts	= explode( $this->options['delimiter'], $key );
