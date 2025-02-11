@@ -68,7 +68,7 @@ class Matrix extends PluginAbstract
 	 */
 	public function __construct( array $options = [] )
 	{
-		if( isset( $options['keyword'] ) ){
+		if( isset( $options['keyword'] ) && is_string( $options['keyword'] ) ){
 			$this->keyword	= $options['keyword'];
 			unset( $options['keyword'] );
 		}
@@ -94,9 +94,10 @@ class Matrix extends PluginAbstract
 		if( '' === ( $matches[0] ?? '' ) )
 			return $template;
 		$value	= NULL;
-		for( $i=0; $i<count( $matches[0] ); $i++ )
-			if( $this->extractValue( $matches[2][$i], $value ) )
-				$template	= str_replace( $matches[0][$i], $value ?? '', $template );
+		for( $i=0; $i<count( $matches[0] ); $i++ ){
+			$value		= $this->extractValue( $matches[2][$i], $value );
+			$template	= str_replace( $matches[0][$i], $value, $template );
+		}
 		return $template;
 	}
 
@@ -105,9 +106,9 @@ class Matrix extends PluginAbstract
 	 *	@access		public
 	 *	@param		string		$key		Matrix key
 	 *	@param		mixed		$value		Reference to value for matrix key (if existing)
-	 *	@return		boolean
+	 *	@return		string
 	 */
-	protected function extractValue( string $key, mixed &$value ): bool
+	protected function extractValue( string $key, mixed $value ): string
 	{
 		$depth	= $this->options['depth'];
 		$parts	= explode( $this->options['delimiter'], $key );
@@ -126,7 +127,6 @@ class Matrix extends PluginAbstract
 			}
 			$data	= $data[$parts[$i]];
 		}
-		$value	= $data;
-		return TRUE;
+		return $data;
 	}
 }

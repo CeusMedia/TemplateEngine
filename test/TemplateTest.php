@@ -16,7 +16,6 @@ declare( strict_types = 1 );
 namespace CeusMedia\TemplateEngineTest;
 
 use CeusMedia\Common\ADT\Collection\Dictionary;
-use CeusMedia\CommonTest\MockAntiProtection;
 use CeusMedia\TemplateEngine\Plugin\Comments;
 use CeusMedia\TemplateEngine\Template;
 use PHPUnit\Framework\TestCase as BaseCase;

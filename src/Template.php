@@ -359,13 +359,13 @@ class Template
 
 	/**
 	 *	Adds one Element.
-	 *	@param		string						$tag		Tag name
-	 *	@param		string|int|float|Template	$element	...
-	 *	@param		boolean						$overwrite	if set to TRUE, it will overwrite an existing element with the same label
+	 *	@param		string							$tag		Tag name
+	 *	@param		string|int|float|array|object	$element	...
+	 *	@param		boolean							$overwrite	if set to TRUE, it will overwrite an existing element with the same label
 	 *	@return		void
 	 *	@throws		ReflectionException
 	 */
-	public function addElement( string $tag, string|int|float|Template $element, bool $overwrite = FALSE ): void
+	public function addElement( string $tag, string|int|float|array|object $element, bool $overwrite = FALSE ): void
 	{
 		$this->add( [$tag => $element], $overwrite );
 	}
@@ -499,17 +499,18 @@ class Template
 //			}
 			$this->tmp	= $tmp;																		//  store current temporary element content for filters
 			$pattern	= '/<%(\?)?('.preg_quote( $label, '/' ).')(\|.+)?%>/';				//  create regular expression for element label with filter support
-			$out		= preg_replace_callback( $pattern, $callbackFilter, $out );					//  realize placeholder, apply filters on content
+			/** @var string $out */
+			$out		= preg_replace_callback( $pattern, $callbackFilter, $out ) ?? $out;			//  realize placeholder, apply filters on content
  		}
-		$out = preg_replace( '/<%\?.*%>/U', '', $out );    						//  remove left over optional placeholders
-		$out = preg_replace( '/\n\s+\n/', "\n", $out );							//  remove double line breaks
+		$out = preg_replace( '/<%\?.*%>/U', '', $out ) ?? $out;    				//  remove left over optional placeholders
+		$out = preg_replace( '/\n\s+\n/', "\n", $out ) ?? $out;					//  remove double line breaks
 
 		$this->applyPlugins( $out, 'post' );											//  apply post-processing plugins
 
-		$out = preg_replace( '/<%\??\w+\(.+\)%>/U', '', $out );    				//  remove left over plugin calls @todo handle this with exceptions later
+		$out = preg_replace( '/<%\??\w+\(.+\)%>/U', '', $out ) ?? $out; 			//  remove left over plugin calls @todo handle this with exceptions later
 
 		$tags = [];																					//  create container for left over placeholders
-		if( preg_match_all( '/<%.*%>/U', $out, $tags ) === 0 )						//  no more placeholders left over
+		if( 0 === preg_match_all( '/<%.*%>/U', $out, $tags )  )						//  no more placeholders left over
 			return $out; 																			//  return final result
 
 		$tags	= array_shift( $tags );														//

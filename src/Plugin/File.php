@@ -53,7 +53,8 @@ class File extends PluginAbstract
 	/**	@var		array		$options		Plugin options */
 	protected array $options	= [
 		'path'		=> '',
-		'mode'		=> 'strict'
+		'mode'		=> 'strict',
+		'keyword'	=> '',
 	];
 
 	/**	@var		string		$type			Plugin type (pre|post) */
@@ -68,11 +69,11 @@ class File extends PluginAbstract
 	 */
 	public function __construct( array $options = [] )
 	{
-		if( isset( $options['keyword'] ) ){
+		if( isset( $options['keyword'] ) && is_string( $options['keyword'] ) ){
 			$this->keyword	= $options['keyword'];
 			unset( $options['keyword'] );
 		}
-		if( isset( $options['path'] ) ){
+		if( isset( $options['path'] ) && is_string( $options['path'] ) ){
 			$this->options['path']	= $options['path'];
 			unset( $options['path'] );
 		}
@@ -131,6 +132,8 @@ class File extends PluginAbstract
 	 */
 	protected function getFileNameFromKey( string $key ): string
 	{
-		return $this->options['path'].$key;
+		/** @var string $path */
+		$path	= $this->options['path'];
+		return $path.$key;
 	}
 }
