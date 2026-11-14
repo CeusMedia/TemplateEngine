@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- *	...
+ *	Plugin for loading external file content into templates.
  *
  *	Copyright (c) 2011-2024 Christian Würker (ceusmedia.de)
  *
@@ -37,7 +37,8 @@ use RuntimeException;
 use Throwable;
 
 /**
- *	...
+ *	Pre-plugin that loads external file content and inserts it into the template.
+ *	Supports path validation to prevent directory traversal attacks.
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>

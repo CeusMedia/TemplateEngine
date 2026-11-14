@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- *	...
+ *	Plugin for cleaning and formatting HTML output using the tidy extension.
  *
  *	Copyright (c) 2011-2024 Christian Würker (ceusmedia.de)
  *
@@ -33,7 +33,8 @@ use CeusMedia\Common\Exception\MissingExtension as MissingExtensionException;
 use CeusMedia\TemplateEngine\PluginAbstract;
 
 /**
- *	...
+ *	Post-plugin that cleans and formats the rendered HTML output using the
+ *	PHP tidy extension with configurable options for indentation, encoding, and cleanup.
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>

@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- *	...
+ *	Plugin for including other template files within templates.
  *
  *	Copyright (c) 2011-2024 Christian Würker (ceusmedia.de)
  *
@@ -35,7 +35,8 @@ use Psr\SimpleCache\InvalidArgumentException as SimpleCacheInvalidArgumentExcept
 use ReflectionException;
 
 /**
- *	...
+ *	Pre-plugin that includes other template files by rendering them recursively
+ *	and inserting the result at the inclusion point.
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>

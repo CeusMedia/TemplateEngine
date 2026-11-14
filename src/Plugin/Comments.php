@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- *	...
+ *	Plugin for removing template engine comments and optionally HTML comments.
  *
  *	Copyright (c) 2011-2024 Christian Würker (ceusmedia.de)
  *
@@ -32,7 +32,8 @@ namespace CeusMedia\TemplateEngine\Plugin;
 use CeusMedia\TemplateEngine\PluginAbstract;
 
 /**
- *	...
+ *	Post-plugin that removes template engine style comments (`<%-- ... --%>`)
+ *	and optionally HTML comments (`<!-- ... -->`) from the rendered output.
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>

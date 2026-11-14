@@ -22,6 +22,7 @@ use PHPUnit\Framework\TestCase as BaseCase;
 
 use ArrayObject;
 use ReflectionException;
+use ReflectionObject;
 
 /**
  *	TestUnit of Template
@@ -34,14 +35,13 @@ class TemplateTest extends BaseCase
 {
 	private Template $template;
 
-	/** @var object $mock */
-	protected object $mock;
 	protected array $mockElements;
 	protected string $path;
 
 	public function setUp(): void
 	{
-		$this->mock			= MockAntiProtection::getInstance( Template::class );
+		Template::clear();
+		Template::setTemplatePath( '' );
 		$this->path			= dirname( __FILE__ )."/assets/";
 		$this->template		= new Template( $this->path.'template_testcase1.html' );
 		$this->mockElements	= array(
@@ -92,7 +92,7 @@ class TemplateTest extends BaseCase
 	public function testAdd1(): void
 	{
 		$expected	= 18;
-		$actual	= $this->mock->add( $this->mockElements );
+		$actual	= $this->template->add( $this->mockElements );
 		self::assertEquals( $expected, $actual );
 	}
 
@@ -113,8 +113,9 @@ class TemplateTest extends BaseCase
 			'step1.key1'	=> "value1",
 			'step1.key2'	=> "value2",
 		);
-		$this->mock->add( $tags );
-		$actual	= $this->mock->getProtectedVar( 'elements' );
+		$testTemplate	= new Template( $this->path.'template_testcase1.html' );
+		$testTemplate->add( $tags );
+		$actual	= self::getProtectedProperty( $testTemplate, 'elements' );
 		self::assertEquals( $expected, $actual );
 	}
 
@@ -133,8 +134,9 @@ class TemplateTest extends BaseCase
 			'step1.key1'	=> "value1",
 			'step1.key2'	=> "value2",
 		);
-		$this->mock->add( $tags );
-		$actual	= $this->mock->getProtectedVar( 'elements' );
+		$testTemplate	= new Template( $this->path.'template_testcase1.html' );
+		$testTemplate->add( $tags );
+		$actual	= self::getProtectedProperty( $testTemplate, 'elements' );
 		self::assertEquals( $expected, $actual );
 	}
 
@@ -229,9 +231,9 @@ class TemplateTest extends BaseCase
 	public function testGetElements(): void
 	{
 		$data		= array( 'key' => 'value' );
-		$this->mock->setProtectedVar( 'elements', $data );
+		self::setProtectedProperty( $this->template, 'elements', $data );
 		$expected	= $data;
-		$actual	= $this->mock->getElements();
+		$actual	= $this->template->getElements();
 		self::assertEquals( $expected, $actual );
 	}
 
@@ -439,6 +441,33 @@ class TemplateTest extends BaseCase
 		Template::clear();
 		self::assertEquals( [], Template::$plugins );
 		self::assertEquals( [], Template::$filters );
+	}
+
+	/**
+	 *	Returns the value of a protected property via reflection.
+	 *	@param		object		$object		Object instance
+	 *	@param		string		$propertyName	Property name
+	 *	@return		mixed
+	 */
+	protected static function getProtectedProperty( object $object, string $propertyName ): mixed
+	{
+		$reflection	= new ReflectionObject( $object );
+		$property		= $reflection->getProperty( $propertyName );
+		return $property->getValue( $object );
+	}
+
+	/**
+	 *	Sets the value of a protected property via reflection.
+	 *	@param		object		$object		Object instance
+	 *	@param		string		$propertyName	Property name
+	 *	@param		mixed		$value			Value to set
+	 *	@return		void
+	 */
+	protected static function setProtectedProperty( object $object, string $propertyName, mixed $value ): void
+	{
+		$reflection	= new ReflectionObject( $object );
+		$property		= $reflection->getProperty( $propertyName );
+		$property->setValue( $object, $value );
 	}
 }
 

@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- *	...
+ *	Plugin for looking up values in a data matrix by key.
  *
  *	Copyright (c) 2011-2024 Christian Würker (ceusmedia.de)
  *
@@ -34,7 +34,8 @@ use InvalidArgumentException;
 use RuntimeException;
 
 /**
- *	...
+ *	Pre-plugin that replaces matrix tags with values looked up from a configured
+ *	data array using dot-delimited keys and configurable depth.
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>

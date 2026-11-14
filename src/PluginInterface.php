@@ -31,7 +31,8 @@ declare(strict_types=1);
 namespace CeusMedia\TemplateEngine;
 
 /**
- *
+ *	Interface for template engine plugins that modify template content
+ *	before or after element replacement.
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine
  *	@author			David Seebacher <dseebacher@gmail.com>

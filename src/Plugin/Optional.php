@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 /**
- *	...
+ *	Plugin for handling optional template sections.
  *
  *	Copyright (c) 2011-2024 Christian Würker (ceusmedia.de)
  *
@@ -32,7 +32,8 @@ namespace CeusMedia\TemplateEngine\Plugin;
 use CeusMedia\TemplateEngine\PluginAbstract;
 
 /**
- *	...
+ *	Pre-plugin that processes optional template sections (`<%?-- ... --%>`),
+ *	either keeping the content or removing it entirely based on configuration.
  *	@category		Library
  *	@package		CeusMedia_TemplateEngine_Plugin
  *	@author			Christian Würker <christian.wuerker@ceusmedia.de>
