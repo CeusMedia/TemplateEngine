@@ -43,7 +43,7 @@ All notable changes to this project will be documented in this file.
 - **Static return types**: Added `: void` return type declarations to static methods (`addFilter`, `addPlugin`, `registerFilter`, `setCache`, `setTemplatePath`, `addElement`, `addTemplate`, `checkLoadLimit`)
 - **`Matrix` null value handling**: `str_replace()` now uses `$value ?? ''` to handle null matrix values
 - **Plugin keywords**: Added `$keyword` property to `Comments`, `Optional`, and `Tidy` plugins
-- **Copyright**: Updated copyright year to 2024
+- **Copyright**: Updated copyright year to 2026
 
 ## [0.5.1] - 2023-11-03
 
