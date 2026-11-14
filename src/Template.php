@@ -80,6 +80,22 @@ class Template
 	/**	@var		array		$loaded			List of loaded templates, used to avoid to load templates to often */
 	protected static array $loaded		= [];
 
+	/**
+	 *	Clears all registered plugins, filters, cache, and loaded template state.
+	 *	Useful for resetting static state in long-running processes or between tests.
+	 *	@access		public
+	 *	@static
+	 *	@return		void
+	 */
+	public static function clear(): void
+	{
+		self::$plugins		= [];
+		self::$filters		= [];
+		self::$cache		= NULL;
+		self::$cachePrefix	= '';
+		self::$loaded		= [];
+	}
+
 	/**	@var		string		$className		Name of template class */
 	protected string $className;
 
@@ -346,7 +362,7 @@ class Template
 		foreach( $data as $key => $value ){
 			$isListObject	= $value instanceof ArrayObject || $value instanceof Dictionary;
 			if( is_array( $value ) || $isListObject  ){
-				$number	+= $this->addArrayRecursive( $key, $value, $steps );
+				$number	+= $this->addArrayRecursive( $key, $value, $steps, $overwrite );
 			}
 			else{
 				$key	= implode( ".", $steps ).".".$key;
@@ -433,7 +449,7 @@ class Template
 	 */
 	public function getLabels( int $type = 0, bool $xml = TRUE ): array
 	{
- 		$content = (string) preg_replace( '/<%\??--.*--%>/sU', '', $this->template );
+		$content = (string) preg_replace( '/<%\??--.*--%>/sU', '', $this->template );
 		switch( $type ){
 			case 2:
 				preg_match_all( '/<%(\?.*)%>/U', $content, $tags );
@@ -458,7 +474,7 @@ class Template
 	{
 		if( FALSE !== preg_match( '/<%--'.$tag.'(.*)--%>/sU', $this->template, $tag ) )
 			return $xml ? $tag[0] : $tag[1];
-		return '';
+		return NULL;
 	}
 
 	/**
@@ -501,7 +517,7 @@ class Template
 			$pattern	= '/<%(\?)?('.preg_quote( $label, '/' ).')(\|.+)?%>/';				//  create regular expression for element label with filter support
 			/** @var string $out */
 			$out		= preg_replace_callback( $pattern, $callbackFilter, $out ) ?? $out;			//  realize placeholder, apply filters on content
- 		}
+		}
 		$out = preg_replace( '/<%\?.*%>/U', '', $out ) ?? $out;    				//  remove left over optional placeholders
 		$out = preg_replace( '/\n\s+\n/', "\n", $out ) ?? $out;					//  remove double line breaks
 

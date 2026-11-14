@@ -110,7 +110,7 @@ class Matrix extends PluginAbstract
 	 */
 	protected function extractValue( string $key, mixed $value ): string
 	{
-		$depth	= $this->options['depth'];
+		$depth	= (int) $this->options['depth'];
 		$parts	= explode( $this->options['delimiter'], $key );
 		if( count( $parts ) !== $depth )
 			throw new InvalidArgumentException( 'Depth ('.count( $parts ).') of key ('.$key.') does not match matrix depth ('.$depth.')' );
@@ -127,6 +127,6 @@ class Matrix extends PluginAbstract
 			}
 			$data	= $data[$parts[$i]];
 		}
-		return $data;
+		return (string) $data;
 	}
 }

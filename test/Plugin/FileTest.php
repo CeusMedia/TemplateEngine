@@ -43,10 +43,10 @@ class FileTest extends BaseCase
 		self::assertStringContainsString( 'Before', $actual );
 		self::assertStringContainsString( 'After', $actual );
 		// The content should be stored in elements
-		$found	= false;
+		$found	= FALSE;
 		foreach( $elements as $key => $value ){
-			if( strpos( $key, 'STE' ) === 0 && strpos( $value, 'This is a test file' ) !== false ){
-				$found	= true;
+			if( strpos( $key, 'STE' ) === 0 && strpos( $value, 'This is a test file' ) !== FALSE ){
+				$found	= TRUE;
 				break;
 			}
 		}
@@ -67,10 +67,10 @@ class FileTest extends BaseCase
 		$actual	= $plugin->work( $template, $elements );
 
 		self::assertStringNotContainsString( '<%file(', $actual );
-		$found	= false;
+		$found	= FALSE;
 		foreach( $elements as $key => $value ){
-			if( strpos( $key, 'STE' ) === 0 && strpos( $value, 'This file is in a subdirectory' ) !== false ){
-				$found	= true;
+			if( strpos( $key, 'STE' ) === 0 && strpos( $value, 'This file is in a subdirectory' ) !== FALSE ){
+				$found	= TRUE;
 				break;
 			}
 		}
