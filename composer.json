@@ -26,7 +26,7 @@
     "phpstan/phpstan": "^2",
     "phpstan/phpstan-strict-rules": "^2",
     "php-parallel-lint/php-parallel-lint": "^1.4 | dev-master",
-    "rector/rector": "*"
+    "rector/rector": "^2"
   },
   "suggest": {
     "ceus-media/cache": "*"

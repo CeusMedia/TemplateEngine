@@ -337,6 +337,109 @@ class TemplateTest extends BaseCase
 		$actual		= Template::renderFile( $this->path.'template_testcase4.html', $data );
 		self::assertEquals( $expected, $actual );
 	}
+
+	/**
+	 *	Test renderString with basic elements.
+	 *	@return void
+	 *	@covers ::renderString
+	 */
+	public function testRenderString(): void
+	{
+		$actual	= Template::renderString( '<%title%> <%name%>', [
+			'title' => 'Mr',
+			'name'  => 'Smith',
+		] );
+		self::assertEquals( 'Mr Smith', $actual );
+	}
+
+	/**
+	 *	Test renderString with optional tags.
+	 *	@return void
+	 *	@covers ::renderString
+	 */
+	public function testRenderString_Optional(): void
+	{
+		$actual	= Template::renderString( '<%title%> <%?missing%>', [
+			'title' => 'Hello',
+		] );
+		self::assertEquals( 'Hello ', $actual );
+	}
+
+	/**
+	 *	Test renderString throws on missing mandatory label.
+	 *	@return void
+	 *	@covers ::renderString
+	 */
+	public function testRenderString_MissingLabel(): void
+	{
+		$this->expectException( \CeusMedia\TemplateEngine\Exception\Template::class );
+		Template::renderString( '<%title%> <%missing%>', [
+			'title' => 'Hello',
+		] );
+	}
+
+	/**
+	 *	Test renderString with file name for error context.
+	 *	@return void
+	 *	@covers ::renderString
+	 */
+	public function testRenderString_WithFileName(): void
+	{
+		$actual	= Template::renderString( '<%value%>', ['value' => 42], 'test.tmpl' );
+		self::assertEquals( '42', $actual );
+	}
+
+	/**
+	 *	Test caching with a mock PSR-16 cache.
+	 *	@return void
+	 *	@covers ::setCache
+	 *	@covers ::setTemplate
+	 */
+	public function testSetCache(): void
+	{
+		$cache	= new MockCache();
+		Template::setCache( $cache, 'test_' );
+		$template	= new Template( $this->path.'template_testcase1.html' );
+		$template->addElement( 'title', 'Test' );
+		$template->addElement( 'text', 'Content' );
+		$actual	= $template->render();
+		self::assertIsString( $actual );
+		self::assertNotEmpty( $cache->getStoredKeys() );
+	}
+
+	/**
+	 *	Test checkLoadLimit throws when file loaded too many times.
+	 *	@return void
+	 *	@covers ::checkLoadLimit
+	 */
+	public function testCheckLoadLimit(): void
+	{
+		Template::clear();
+		// Simulate loading a file more than 100 times
+		$reflection	= new \ReflectionClass( Template::class );
+		$method		= $reflection->getMethod( 'checkLoadLimit' );
+		$method->setAccessible( TRUE );
+		try {
+			for( $i = 0; $i < 101; $i++ )
+				$method->invoke( NULL, '/test/path/template.html' );
+		} catch( \CeusMedia\TemplateEngine\Exception\Template $e ) {
+			self::assertEquals( \CeusMedia\TemplateEngine\Exception\Template::FILE_LOAD_LIMIT, $e->getCode() );
+			return;
+		}
+		self::fail( 'Expected TemplateException for load limit' );
+	}
+
+	/**
+	 *	Test clear resets static state.
+	 *	@return void
+	 *	@covers ::clear
+	 */
+	public function testClear(): void
+	{
+		Template::clear();
+		self::assertEquals( [], Template::$plugins );
+		self::assertEquals( [], Template::$filters );
+	}
 }
 
 class TemplateTestDataObject

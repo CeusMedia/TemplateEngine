@@ -71,10 +71,10 @@ class Template
 	/**	@var		CacheInterface|NULL	$cache		Storage instance to be used for caching */
 	protected static ?CacheInterface $cache		= NULL;
 
-	/**	@var		string		$cachePrefix	... */
+	/**	@var		string		$cachePrefix	Prefix for cache keys */
 	protected static string $cachePrefix;
 
-	/**	@var		string		$pathTemplates	... */
+	/**	@var		string		$pathTemplates	Base path for template files */
 	protected static string $pathTemplates	= '';
 
 	/**	@var		array		$loaded			List of loaded templates, used to avoid to load templates to often */
@@ -108,7 +108,7 @@ class Template
 	/**	@var		string		$template		Content of a specified template file */
 	protected string $template;
 
-	/**	@var		string		$tmp			... */
+	/**	@var		string		$tmp			Temporary storage for filter chain output */
 	protected string $tmp;
 
 	/**
@@ -151,8 +151,8 @@ class Template
 		self::$plugins[$priority][]	= $plugin;
 	}
 
-	/**
-	 *	...
+ 	/**
+	 *	Returns the configured base path for template files.
 	 *	@static
 	 *	@access		public
 	 *	@return		string
@@ -259,8 +259,8 @@ class Template
 		$this->add( $elements );
 	}
 
-	/**
-	 *	...
+ 	/**
+	 *	Renders and returns the template as a string.
 	 *	@access		public
 	 *	@return		string
 	 */
@@ -312,13 +312,13 @@ class Template
 		return $number;
 	}
 
-	/**
-	 *	...
+ 	/**
+	 *	Adds the public properties and getter-method values of an object as template elements.
 	 *	@access		public
-	 *	@param		string		$name		...
-	 *	@param		object		$object		...
-	 *	@param		array		$steps		...
-	 *	@param		boolean		$overwrite		...
+	 *	@param		string		$name			Prefix label for the object properties
+	 *	@param		object		$object			Object to extract properties from
+	 *	@param		array		$steps			Steps within recursion (internal use)
+	 *	@param		bool			$overwrite	If TRUE, overwrites existing elements with the same key
 	 *	@return		int
 	 *	@throws		ReflectionException
 	 */
@@ -428,6 +428,8 @@ class Template
 		$content = explode( "\n", $content );
 		foreach( $content as $row ){
 			if( FALSE !== preg_match( '/\s*@(\S+)?\s+(.*)/', $row, $out ) ){
+				if( count( $out ) < 3 )
+					continue;
 				if( $unique )
 					$list[$out[1]] = $out[2];
 				else{
@@ -586,14 +588,14 @@ class Template
 	 *	Counts loadings of template files and excepts if a file has been loaded too often.
 	 *	@static
 	 *	@access		protected
-	 *	@param		string		$filePath		...
+	 *	@param		string		$filePath		Absolute path of the template file being loaded
 	 *	@return		void
 	 *	@throws		TemplateException
 	 *	@todo		make limit configurable
 	 */
 	protected static function checkLoadLimit( string $filePath ): void
 	{
-		if( !in_array( $filePath, self::$loaded, TRUE ) )											//  file not found in load list
+		if( !array_key_exists( $filePath, self::$loaded ) )											//  file not found in load list
 			self::$loaded[$filePath] = 1;															//  append file to load list
 		else
 			self::$loaded[$filePath]++;																//  count file load
@@ -605,10 +607,10 @@ class Template
 		}
 	}
 
-	/**
-	 *	...
+ 	/**
+	 *	Applies registered filters to a tag match during rendering.
 	 *	@access		protected
-	 *	@param		array		$matches		...
+	 *	@param		array		$matches		Regex match array from tag replacement
 	 *	@return		string
 	 *	@throws		ReflectionException
 	 */
