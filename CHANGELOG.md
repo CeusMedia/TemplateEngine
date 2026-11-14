@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [0.7.0] - 2024-11-14
+## [0.6.1] - 2026-11-14
 
 ### Security Fixes
 - **File plugin path traversal**: `getFileNameFromKey()` now validates resolved paths stay within the configured base directory using `realpath()`, blocking directory traversal attacks (`../`)
@@ -23,6 +23,7 @@ All notable changes to this project will be documented in this file.
 - **README documentation**: Added comprehensive template syntax reference, usage examples, built-in plugin/filter tables, filter combining guide, and security notes
 
 ### Changed
+- **Branch merge**: `0.6.x-review` merged into `0.6.x`, preparing version 0.6.1
 - **Code style**: Standardized `TRUE`/`FALSE`/`NULL` constants and tab-based indentation across all new code to match project conventions
 - **`registerFilter` docblock**: Clarified that class name strings are lazily instantiated on first use via `ObjectFactory`
 - **Placeholder docblocks**: Filled in 7 `* ...` placeholder docblocks with proper descriptions in `Template.php`
@@ -34,7 +35,7 @@ All notable changes to this project will be documented in this file.
 ### Dependencies
 - **`rector/rector`**: Pinned from `"*"` to `"^2"` in `composer.json` dev dependencies
 
-## [0.6.x] - Unreleased
+## [0.6.0] - 2026-11-14
 
 ### Changed
 - **PHPStan v2**: Upgraded from PHPStan v1 to v2, dropping analysis level to 9 + strict-rules
