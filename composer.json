@@ -44,6 +44,10 @@
       "@dev:install",
       "XDEBUG_MODE=coverage php vendor/bin/phpunit --configuration util/phpunit10.xml --testsuite units"
     ],
+    "dev:phpunit-coverage": [
+      "@dev:install",
+      "XDEBUG_MODE=coverage php vendor/bin/phpunit --configuration util/phpunit10.xml --testsuite units"
+    ],
     "dev:phpstan": [
       "@dev:install",
       "XDEBUG_MODE=off vendor/bin/phpstan analyze --configuration=util/phpstan.neon --memory-limit=1G --verbose"
@@ -78,6 +82,7 @@
     "dev:phpstan-save": "Store current results in ignore list",
     "dev:rector": "Shows suggestions of configured Rector rules",
     "dev:rector-fix": "Apply currently configured Rector rules to codebase",
-    "dev:test-syntax": "Validate code base syntax using PHP linter"
+    "dev:test-syntax": "Validate code base syntax using PHP linter",
+    "dev:coverage": "Run unit tests with HTML code coverage report"
   }
 }

@@ -77,7 +77,6 @@ class Tidy extends PluginAbstract
 		'write-back'					=> true,
 		'drop-proprietary-attributes'	=> false,
 		'hide-comments'					=> true,
-		'hide-endtags'					=> false,
 		'literal-attributes'			=> false,
 		'drop-empty-paras'				=> true,
 		'enclose-text'					=> true,

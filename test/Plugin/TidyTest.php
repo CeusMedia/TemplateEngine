@@ -45,6 +45,7 @@ class TidyTest extends TestCase
 	/**
 	 *	Test basic HTML cleanup.
 	 *	@covers		CeusMedia\TemplateEngine\Plugin\Tidy::work
+	 *	@covers		CeusMedia\TemplateEngine\PluginAbstract
 	 */
 	public function testWork(): void
 	{
@@ -58,6 +59,7 @@ class TidyTest extends TestCase
 	/**
 	 *	Test that the plugin returns a string.
 	 *	@covers		CeusMedia\TemplateEngine\Plugin\Tidy::work
+	 *	@covers		CeusMedia\TemplateEngine\PluginAbstract
 	 */
 	public function testWork_ReturnType(): void
 	{
@@ -70,6 +72,7 @@ class TidyTest extends TestCase
 	/**
 	 *	Test keyword.
 	 *	@covers		CeusMedia\TemplateEngine\Plugin\Tidy::getKeyword
+	 *	@covers		CeusMedia\TemplateEngine\PluginAbstract
 	 */
 	public function testGetKeyword(): void
 	{
@@ -80,6 +83,7 @@ class TidyTest extends TestCase
 	/**
 	 *	Test plugin type is post.
 	 *	@covers		CeusMedia\TemplateEngine\Plugin\Tidy::getType
+	 *	@covers		CeusMedia\TemplateEngine\PluginAbstract
 	 */
 	public function testGetType(): void
 	{
@@ -90,6 +94,7 @@ class TidyTest extends TestCase
 	/**
 	 *	Test plugin priority.
 	 *	@covers		CeusMedia\TemplateEngine\Plugin\Tidy::getPriority
+	 *	@covers		CeusMedia\TemplateEngine\PluginAbstract
 	 */
 	public function testGetPriority(): void
 	{
@@ -100,6 +105,7 @@ class TidyTest extends TestCase
 	/**
 	 *	Test with empty string.
 	 *	@covers		CeusMedia\TemplateEngine\Plugin\Tidy::work
+	 *	@covers		CeusMedia\TemplateEngine\PluginAbstract
 	 */
 	public function testWork_EmptyString(): void
 	{

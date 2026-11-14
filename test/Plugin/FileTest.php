@@ -29,6 +29,7 @@ class FileTest extends BaseCase
 	 * @return void
 	 * @covers ::work
 	 * @covers \CeusMedia\TemplateEngine\PluginAbstract
+	 * @covers \CeusMedia\TemplateEngine\Plugin\File
 	 */
 	public function testWork(): void
 	{
@@ -57,6 +58,7 @@ class FileTest extends BaseCase
 	 * @return void
 	 * @covers ::work
 	 * @covers \CeusMedia\TemplateEngine\PluginAbstract
+	 * @covers \CeusMedia\TemplateEngine\Plugin\File
 	 */
 	public function testWorkWithSubdirectory(): void
 	{
@@ -82,6 +84,7 @@ class FileTest extends BaseCase
 	 * @return void
 	 * @covers ::work
 	 * @covers \CeusMedia\TemplateEngine\PluginAbstract
+	 * @covers \CeusMedia\TemplateEngine\Plugin\File
 	 */
 	public function testPathTraversalPrevention(): void
 	{
@@ -101,6 +104,7 @@ class FileTest extends BaseCase
 	 * @return void
 	 * @covers ::work
 	 * @covers \CeusMedia\TemplateEngine\PluginAbstract
+	 * @covers \CeusMedia\TemplateEngine\Plugin\File
 	 */
 	public function testPathTraversalStrictMode(): void
 	{
@@ -121,6 +125,7 @@ class FileTest extends BaseCase
 	 * @return void
 	 * @covers ::work
 	 * @covers \CeusMedia\TemplateEngine\PluginAbstract
+	 * @covers \CeusMedia\TemplateEngine\Plugin\File
 	 */
 	public function testPathTraversalVerboseMode(): void
 	{
@@ -140,6 +145,7 @@ class FileTest extends BaseCase
 	 * @return void
 	 * @covers ::work
 	 * @covers \CeusMedia\TemplateEngine\PluginAbstract
+	 * @covers \CeusMedia\TemplateEngine\Plugin\File
 	 */
 	public function testNonExistentFile(): void
 	{
@@ -157,6 +163,7 @@ class FileTest extends BaseCase
 	 * @return void
 	 * @covers ::work
 	 * @covers \CeusMedia\TemplateEngine\PluginAbstract
+	 * @covers \CeusMedia\TemplateEngine\Plugin\File
 	 */
 	public function testTagEscaping(): void
 	{

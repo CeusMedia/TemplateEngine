@@ -36,6 +36,7 @@ class EscapeTest extends TestCase
 	/**
 	 *	Test basic HTML entity escaping.
 	 *	@covers		CeusMedia\TemplateEngine\Filter\Escape::apply
+	 *	@covers		CeusMedia\TemplateEngine\FilterAbstract
 	 */
 	public function testApply(): void
 	{
@@ -47,6 +48,7 @@ class EscapeTest extends TestCase
 	/**
 	 *	Test that single quotes are escaped.
 	 *	@covers		CeusMedia\TemplateEngine\Filter\Escape::apply
+	 *	@covers		CeusMedia\TemplateEngine\FilterAbstract
 	 */
 	public function testSingleQuotes(): void
 	{
@@ -58,6 +60,7 @@ class EscapeTest extends TestCase
 	/**
 	 *	Test XSS prevention with script tags.
 	 *	@covers		CeusMedia\TemplateEngine\Filter\Escape::apply
+	 *	@covers		CeusMedia\TemplateEngine\FilterAbstract
 	 */
 	public function testXssPrevention(): void
 	{
@@ -70,6 +73,7 @@ class EscapeTest extends TestCase
 	/**
 	 *	Test with custom encoding.
 	 *	@covers		CeusMedia\TemplateEngine\Filter\Escape::apply
+	 *	@covers		CeusMedia\TemplateEngine\FilterAbstract
 	 */
 	public function testCustomEncoding(): void
 	{
@@ -81,6 +85,7 @@ class EscapeTest extends TestCase
 	/**
 	 *	Test double encode disabled.
 	 *	@covers		CeusMedia\TemplateEngine\Filter\Escape::apply
+	 *	@covers		CeusMedia\TemplateEngine\FilterAbstract
 	 */
 	public function testDoubleEncodeDisabled(): void
 	{
@@ -92,6 +97,7 @@ class EscapeTest extends TestCase
 	/**
 	 *	Test double encode enabled (default).
 	 *	@covers		CeusMedia\TemplateEngine\Filter\Escape::apply
+	 *	@covers		CeusMedia\TemplateEngine\FilterAbstract
 	 */
 	public function testDoubleEncodeEnabled(): void
 	{
@@ -103,6 +109,7 @@ class EscapeTest extends TestCase
 	/**
 	 *	Test keywords.
 	 *	@covers		CeusMedia\TemplateEngine\Filter\Escape::getKeywords
+	 *	@covers		CeusMedia\TemplateEngine\FilterAbstract
 	 */
 	public function testKeywords(): void
 	{
@@ -113,6 +120,7 @@ class EscapeTest extends TestCase
 	/**
 	 *	Test empty string.
 	 *	@covers		CeusMedia\TemplateEngine\Filter\Escape::apply
+	 *	@covers		CeusMedia\TemplateEngine\FilterAbstract
 	 */
 	public function testEmptyString(): void
 	{

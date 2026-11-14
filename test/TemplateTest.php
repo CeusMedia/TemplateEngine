@@ -344,6 +344,7 @@ class TemplateTest extends BaseCase
 	 *	Test renderString with basic elements.
 	 *	@return void
 	 *	@covers ::renderString
+	 *	@covers \CeusMedia\TemplateEngine\Template
 	 */
 	public function testRenderString(): void
 	{
@@ -358,6 +359,7 @@ class TemplateTest extends BaseCase
 	 *	Test renderString with optional tags.
 	 *	@return void
 	 *	@covers ::renderString
+	 *	@covers \CeusMedia\TemplateEngine\Template
 	 */
 	public function testRenderString_Optional(): void
 	{
@@ -371,6 +373,8 @@ class TemplateTest extends BaseCase
 	 *	Test renderString throws on missing mandatory label.
 	 *	@return void
 	 *	@covers ::renderString
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 *	@covers \CeusMedia\TemplateEngine\Exception\Template
 	 */
 	public function testRenderString_MissingLabel(): void
 	{
@@ -384,6 +388,7 @@ class TemplateTest extends BaseCase
 	 *	Test renderString with file name for error context.
 	 *	@return void
 	 *	@covers ::renderString
+	 *	@covers \CeusMedia\TemplateEngine\Template
 	 */
 	public function testRenderString_WithFileName(): void
 	{
@@ -396,6 +401,7 @@ class TemplateTest extends BaseCase
 	 *	@return void
 	 *	@covers ::setCache
 	 *	@covers ::setTemplate
+	 *	@covers \CeusMedia\TemplateEngine\Template
 	 */
 	public function testSetCache(): void
 	{
@@ -413,6 +419,8 @@ class TemplateTest extends BaseCase
 	 *	Test checkLoadLimit throws when file loaded too many times.
 	 *	@return void
 	 *	@covers ::checkLoadLimit
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 *	@covers \CeusMedia\TemplateEngine\Exception\Template
 	 */
 	public function testCheckLoadLimit(): void
 	{
@@ -435,12 +443,516 @@ class TemplateTest extends BaseCase
 	 *	Test clear resets static state.
 	 *	@return void
 	 *	@covers ::clear
+	 *	@covers \CeusMedia\TemplateEngine\Template
 	 */
 	public function testClear(): void
 	{
 		Template::clear();
 		self::assertEquals( [], Template::$plugins );
 		self::assertEquals( [], Template::$filters );
+	}
+
+	/**
+	 *	Test getTemplatePath returns configured path.
+	 *	@return void
+	 *	@covers ::getTemplatePath
+	 *	@covers ::setTemplatePath
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testGetTemplatePath(): void
+	{
+		Template::setTemplatePath( '/tmp/templates/' );
+		self::assertEquals( '/tmp/templates/', Template::getTemplatePath() );
+	}
+
+	/**
+	 *	Test setTemplatePath normalizes path.
+	 *	@return void
+	 *	@covers ::setTemplatePath
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testSetTemplatePath(): void
+	{
+		Template::setTemplatePath( '/tmp/templates' );
+		self::assertEquals( '/tmp/templates', Template::getTemplatePath() );
+	}
+
+	/**
+	 *	Test addFilter registers a filter with default keywords.
+	 *	@return void
+	 *	@covers ::addFilter
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 *	@covers \CeusMedia\TemplateEngine\FilterAbstract
+	 */
+	public function testAddFilter(): void
+	{
+		Template::clear();
+		$filter	= new \CeusMedia\TemplateEngine\Filter\Escape();
+		Template::addFilter( $filter );
+		self::assertArrayHasKey( 'escape', Template::$filters );
+	}
+
+	/**
+	 *	Test addFilter with custom keywords.
+	 *	@return void
+	 *	@covers ::addFilter
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 *	@covers \CeusMedia\TemplateEngine\FilterAbstract
+	 */
+	public function testAddFilter_CustomKeywords(): void
+	{
+		Template::clear();
+		$filter	= new \CeusMedia\TemplateEngine\Filter\Escape();
+		Template::addFilter( $filter, ['my_escape'] );
+		self::assertArrayHasKey( 'my_escape', Template::$filters );
+	}
+
+	/**
+	 *	Test addFilter throws on duplicate keyword.
+	 *	@return void
+	 *	@covers ::addFilter
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 *	@covers \CeusMedia\TemplateEngine\FilterAbstract
+	 */
+	public function testAddFilter_DuplicateKeyword(): void
+	{
+		Template::clear();
+		$filter1	= new \CeusMedia\TemplateEngine\Filter\Escape();
+		$filter2	= new \CeusMedia\TemplateEngine\Filter\Escape();
+		Template::addFilter( $filter1 );
+		$this->expectException( \RuntimeException::class );
+		Template::addFilter( $filter2 );
+	}
+
+	/**
+	 *	Test registerFilter registers a filter by class name.
+	 *	@return void
+	 *	@covers ::registerFilter
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testRegisterFilter(): void
+	{
+		Template::clear();
+		Template::registerFilter( \CeusMedia\TemplateEngine\Filter\Escape::class, ['html_escape'] );
+		self::assertArrayHasKey( 'html_escape', Template::$filters );
+		self::assertEquals( \CeusMedia\TemplateEngine\Filter\Escape::class, Template::$filters['html_escape'] );
+	}
+
+	/**
+	 *	Test registerFilter throws on empty keywords.
+	 *	@return void
+	 *	@covers ::registerFilter
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testRegisterFilter_EmptyKeywords(): void
+	{
+		Template::clear();
+		$this->expectException( \InvalidArgumentException::class );
+		Template::registerFilter( \CeusMedia\TemplateEngine\Filter\Escape::class, [] );
+	}
+
+	/**
+	 *	Test registerFilter throws on duplicate keyword.
+	 *	@return void
+	 *	@covers ::registerFilter
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testRegisterFilter_DuplicateKeyword(): void
+	{
+		Template::clear();
+		Template::registerFilter( \CeusMedia\TemplateEngine\Filter\Escape::class, ['dup'] );
+		$this->expectException( \RuntimeException::class );
+		Template::registerFilter( \CeusMedia\TemplateEngine\Filter\Escape::class, ['dup'] );
+	}
+
+	/**
+	 *	Test __toString renders template.
+	 *	@return void
+	 *	@covers ::__toString
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testToString(): void
+	{
+		$template	= new Template();
+		self::setProtectedProperty( $template, 'template', '<%name%>' );
+		self::setProtectedProperty( $template, 'elements', ['name' => 'Test'] );
+		$actual	= (string) $template;
+		self::assertEquals( 'Test', $actual );
+	}
+
+	/**
+	 *	Test getTemplate returns template content.
+	 *	@return void
+	 *	@covers ::getTemplate
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testGetTemplate(): void
+	{
+		$template	= new Template();
+		self::setProtectedProperty( $template, 'template', 'Hello World' );
+		self::assertEquals( 'Hello World', $template->getTemplate() );
+	}
+
+	/**
+	 *	Test getLabels returns all labels.
+	 *	@return void
+	 *	@covers ::getLabels
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testGetLabels(): void
+	{
+		$template	= new Template();
+		self::setProtectedProperty( $template, 'template', '<%title%> <%?optional%> <%text%>' );
+		$labels	= $template->getLabels();
+		self::assertContains( '<%title%>', $labels );
+		self::assertContains( '<%?optional%>', $labels );
+		self::assertContains( '<%text%>', $labels );
+	}
+
+	/**
+	 *	Test getLabels with mandatory type.
+	 *	@return void
+	 *	@covers ::getLabels
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testGetLabels_Mandatory(): void
+	{
+		$template	= new Template();
+		self::setProtectedProperty( $template, 'template', '<%title%> <%?optional%>' );
+		$labels	= $template->getLabels( 1 );
+		self::assertContains( '<%title%>', $labels );
+		self::assertNotContains( '<%?optional%>', $labels );
+	}
+
+	/**
+	 *	Test getLabels with optional type.
+	 *	@return void
+	 *	@covers ::getLabels
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testGetLabels_Optional(): void
+	{
+		$template	= new Template();
+		self::setProtectedProperty( $template, 'template', '<%title%> <%?optional%>' );
+		$labels	= $template->getLabels( 2 );
+		self::assertContains( '<%?optional%>', $labels );
+		self::assertNotContains( '<%title%>', $labels );
+	}
+
+	/**
+	 *	Test getLabels without XML delimiters.
+	 *	@return void
+	 *	@covers ::getLabels
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testGetLabels_NoXml(): void
+	{
+		$template	= new Template();
+		self::setProtectedProperty( $template, 'template', '<%title%>' );
+		$labels	= $template->getLabels( 0, FALSE );
+		self::assertContains( 'title', $labels );
+	}
+
+	/**
+	 *	Test getTaggedComment returns comment content.
+	 *	@return void
+	 *	@covers ::getTaggedComment
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testGetTaggedComment(): void
+	{
+		$template	= new Template();
+		self::setProtectedProperty( $template, 'template', '<%--meta @title Test--%>' );
+		$actual	= $template->getTaggedComment( 'meta' );
+		self::assertNotNull( $actual );
+		self::assertStringContainsString( '@title', $actual );
+	}
+
+	/**
+	 *	Test getTaggedComment returns NULL when not found.
+	 *	@return void
+	 *	@covers ::getTaggedComment
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testGetTaggedComment_NotFound(): void
+	{
+		$template	= new Template();
+		self::setProtectedProperty( $template, 'template', '<%--meta @title Test--%>' );
+		$actual	= $template->getTaggedComment( 'other' );
+		self::assertNull( $actual );
+	}
+
+	/**
+	 *	Test getTaggedComment without XML.
+	 *	@return void
+	 *	@covers ::getTaggedComment
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testGetTaggedComment_NoXml(): void
+	{
+		$template	= new Template();
+		self::setProtectedProperty( $template, 'template', '<%--meta @title Test--%>' );
+		$actual	= $template->getTaggedComment( 'meta', FALSE );
+		self::assertNotNull( $actual );
+		self::assertStringNotContainsString( '<%--', $actual );
+	}
+
+	/**
+	 *	Test getElementsFromComment returns elements.
+	 *	@return void
+	 *	@covers ::getElementsFromComment
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testGetElementsFromComment(): void
+	{
+		$template	= new Template();
+		self::setProtectedProperty( $template, 'template', "<%--meta\n@title Test\n@author John--%>" );
+		$elements	= $template->getElementsFromComment( 'meta' );
+		self::assertArrayHasKey( 'title', $elements );
+		self::assertArrayHasKey( 'author', $elements );
+	}
+
+	/**
+	 *	Test getElementsFromComment returns empty when not found.
+	 *	@return void
+	 *	@covers ::getElementsFromComment
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testGetElementsFromComment_NotFound(): void
+	{
+		$template	= new Template();
+		self::setProtectedProperty( $template, 'template', '<%--meta @title Test--%>' );
+		$elements	= $template->getElementsFromComment( 'other' );
+		self::assertEquals( [], $elements );
+	}
+
+	/**
+	 *	Test getElementsFromComment with non-unique mode.
+	 *	@return void
+	 *	@covers ::getElementsFromComment
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testGetElementsFromComment_NonUnique(): void
+	{
+		$template	= new Template();
+		self::setProtectedProperty( $template, 'template', "<%--meta\n@title First\n@title Second--%>" );
+		$elements	= $template->getElementsFromComment( 'meta', FALSE );
+		self::assertArrayHasKey( 'title', $elements );
+		$titleVal	= $elements['title'];
+		// First occurrence is a string, second makes it an array
+		self::assertTrue( is_string( $titleVal ) || is_array( $titleVal ) );
+	}
+
+	/**
+	 *	Test add with invalid key type throws.
+	 *	@return void
+	 *	@covers ::add
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testAdd_InvalidKeyType(): void
+	{
+		$template	= new Template();
+		$this->expectException( \TypeError::class );
+		$template->add( [new \stdClass() => 'value'] );
+	}
+
+	/**
+	 *	Test add with empty key throws.
+	 *	@return void
+	 *	@covers ::add
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testAdd_EmptyKey(): void
+	{
+		$template	= new Template();
+		$this->expectException( \InvalidArgumentException::class );
+		$template->add( ['' => 'value'] );
+	}
+
+	/**
+	 *	Test add with resource value type throws.
+	 *	@return void
+	 *	@covers ::add
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testAdd_UnsupportedType(): void
+	{
+		$template	= new Template();
+		$this->expectException( \InvalidArgumentException::class );
+		$resource	= tmpfile();
+		$template->add( ['key' => $resource] );
+		fclose( $resource );
+	}
+
+	/**
+	 *	Test add with null value skips the element.
+	 *	@return void
+	 *	@covers ::add
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testAdd_NullValue(): void
+	{
+		$template	= new Template();
+		$count	= $template->add( ['key' => null] );
+		self::assertEquals( 0, $count );
+	}
+
+	/**
+	 *	Test add with boolean value.
+	 *	@return void
+	 *	@covers ::add
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testAdd_BooleanValue(): void
+	{
+		$template	= new Template();
+		$count	= $template->add( ['flag' => true] );
+		self::assertEquals( 1, $count );
+	}
+
+	/**
+	 *	Test add with overwrite flag.
+	 *	@return void
+	 *	@covers ::add
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testAdd_Overwrite(): void
+	{
+		$template	= new Template();
+		$template->add( ['key' => 'first'] );
+		$template->add( ['key' => 'second'], TRUE );
+		$elements	= $template->getElements();
+		self::assertEquals( 'second', $elements['key'] );
+	}
+
+	/**
+	 *	Test addFilter with filter applied during render.
+	 *	@return void
+	 *	@covers ::addFilter
+	 *	@covers ::render
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 *	@covers \CeusMedia\TemplateEngine\FilterAbstract
+	 *	@covers \CeusMedia\TemplateEngine\Filter\Rot13
+	 */
+	public function testAddFilter_Render(): void
+	{
+		Template::clear();
+		$filter	= new \CeusMedia\TemplateEngine\Filter\Rot13();
+		Template::addFilter( $filter );
+		$actual	= Template::renderString( '<%text|rot13%>', ['text' => 'Hello'] );
+		self::assertEquals( str_rot13( 'Hello' ), $actual );
+	}
+
+	/**
+	 *	Test Exception/Template getFilePath.
+	 *	@return void
+	 *	@covers \CeusMedia\TemplateEngine\Exception\Template::__construct
+	 *	@covers \CeusMedia\TemplateEngine\Exception\Template::getFilePath
+	 *	@covers \CeusMedia\TemplateEngine\Exception\Template::getNotUsedLabels
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testExceptionGetFilePath(): void
+	{
+		$e	= new \CeusMedia\TemplateEngine\Exception\Template(
+			\CeusMedia\TemplateEngine\Exception\Template::FILE_NOT_FOUND,
+			'/path/to/template.html'
+		);
+		self::assertEquals( '/path/to/template.html', $e->getFilePath() );
+	}
+
+	/**
+	 *	Test Exception/Template getNotUsedLabels.
+	 *	@return void
+	 *	@covers \CeusMedia\TemplateEngine\Exception\Template::__construct
+	 *	@covers \CeusMedia\TemplateEngine\Exception\Template::getNotUsedLabels
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testExceptionGetNotUsedLabels(): void
+	{
+		$labels	= ['title', 'name'];
+		$e	= new \CeusMedia\TemplateEngine\Exception\Template(
+			\CeusMedia\TemplateEngine\Exception\Template::LABELS_MISSING,
+			NULL,
+			$labels
+		);
+		self::assertEquals( $labels, $e->getNotUsedLabels() );
+	}
+
+	/**
+	 *	Test FilterAbstract::setKeywords replaces keywords.
+	 *	@return void
+	 *	@covers \CeusMedia\TemplateEngine\FilterAbstract::setKeywords
+	 *	@covers \CeusMedia\TemplateEngine\FilterAbstract
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testFilterAbstractSetKeywords(): void
+	{
+		$filter	= new \CeusMedia\TemplateEngine\Filter\Escape();
+		$filter->setKeywords( ['custom'] );
+		self::assertEquals( ['custom'], $filter->getKeywords() );
+	}
+
+	/**
+	 *	Test FilterAbstract::setKeywords appends keywords.
+	 *	@return void
+	 *	@covers \CeusMedia\TemplateEngine\FilterAbstract::setKeywords
+	 *	@covers \CeusMedia\TemplateEngine\FilterAbstract
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testFilterAbstractSetKeywordsAppend(): void
+	{
+		$filter	= new \CeusMedia\TemplateEngine\Filter\Escape();
+		$filter->setKeywords( ['custom'], TRUE );
+		$keywords	= $filter->getKeywords();
+		self::assertContains( 'escape', $keywords );
+		self::assertContains( 'custom', $keywords );
+	}
+
+	/**
+	 *	Test PluginAbstract::getOptions returns options.
+	 *	@return void
+	 *	@covers \CeusMedia\TemplateEngine\PluginAbstract::getOptions
+	 *	@covers \CeusMedia\TemplateEngine\PluginAbstract
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testPluginAbstractGetOptions(): void
+	{
+		$plugin	= new \CeusMedia\TemplateEngine\Plugin\Comments( ['remove' => TRUE] );
+		$options	= $plugin->getOptions();
+		self::assertTrue( $options['remove'] );
+	}
+
+	/**
+	 *	Test addTemplate adds a nested template.
+	 *	@return void
+	 *	@covers ::addTemplate
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testAddTemplate(): void
+	{
+		$template	= new Template();
+		$template->addTemplate( 'nested', $this->path.'template_testcase1.html', ['title' => 'Nested', 'text' => 'Content'] );
+		$elements	= $template->getElements();
+		self::assertArrayHasKey( 'nested', $elements );
+		self::assertInstanceOf( Template::class, $elements['nested'] );
+	}
+
+	/**
+	 *	Test addPlugin with Matrix plugin keyword conflict.
+	 *	@return void
+	 *	@covers ::addPlugin
+	 *	@covers \CeusMedia\TemplateEngine\Template
+	 *	@covers \CeusMedia\TemplateEngine\PluginAbstract
+	 *	@covers \CeusMedia\TemplateEngine\Plugin\Matrix
+	 */
+	public function testAddPlugin_DuplicateKeyword(): void
+	{
+		Template::clear();
+		$p1	= new \CeusMedia\TemplateEngine\Plugin\Matrix();
+		$p2	= new \CeusMedia\TemplateEngine\Plugin\Matrix();
+		Template::addPlugin( $p1 );
+		$this->expectException( \RuntimeException::class );
+		Template::addPlugin( $p2 );
 	}
 
 	/**

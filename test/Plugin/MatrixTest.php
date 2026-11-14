@@ -29,6 +29,7 @@ class MatrixTest extends BaseCase
 	 * @return void
 	 * @covers ::work
 	 * @covers \CeusMedia\TemplateEngine\PluginAbstract
+	 * @covers \CeusMedia\TemplateEngine\Plugin\Matrix
 	 */
 	public function testWork(): void
 	{
@@ -55,6 +56,8 @@ class MatrixTest extends BaseCase
 	/**
 	 * @return void
 	 * @covers ::work
+	 * @covers \CeusMedia\TemplateEngine\PluginAbstract
+	 * @covers \CeusMedia\TemplateEngine\Plugin\Matrix
 	 */
 	public function testWorkWithCustomKeyword(): void
 	{
@@ -74,6 +77,8 @@ class MatrixTest extends BaseCase
 	 * Test that missing keys return empty string in quiet mode.
 	 * @return void
 	 * @covers ::work
+	 * @covers \CeusMedia\TemplateEngine\PluginAbstract
+	 * @covers \CeusMedia\TemplateEngine\Plugin\Matrix
 	 */
 	public function testMissingKeyQuietMode(): void
 	{
@@ -95,6 +100,8 @@ class MatrixTest extends BaseCase
 	 * Test that missing keys show error message in verbose mode.
 	 * @return void
 	 * @covers ::work
+	 * @covers \CeusMedia\TemplateEngine\PluginAbstract
+	 * @covers \CeusMedia\TemplateEngine\Plugin\Matrix
 	 */
 	public function testMissingKeyVerboseMode(): void
 	{
@@ -115,6 +122,8 @@ class MatrixTest extends BaseCase
 	 * Test that missing keys throw exception in strict mode.
 	 * @return void
 	 * @covers ::work
+	 * @covers \CeusMedia\TemplateEngine\PluginAbstract
+	 * @covers \CeusMedia\TemplateEngine\Plugin\Matrix
 	 */
 	public function testMissingKeyStrictMode(): void
 	{
@@ -135,6 +144,8 @@ class MatrixTest extends BaseCase
 	 * Test that depth mismatch throws exception.
 	 * @return void
 	 * @covers ::work
+	 * @covers \CeusMedia\TemplateEngine\PluginAbstract
+	 * @covers \CeusMedia\TemplateEngine\Plugin\Matrix
 	 */
 	public function testDepthMismatch(): void
 	{
@@ -155,6 +166,8 @@ class MatrixTest extends BaseCase
 	 * Test with integer values in matrix data.
 	 * @return void
 	 * @covers ::work
+	 * @covers \CeusMedia\TemplateEngine\PluginAbstract
+	 * @covers \CeusMedia\TemplateEngine\Plugin\Matrix
 	 */
 	public function testIntegerValue(): void
 	{
@@ -175,6 +188,8 @@ class MatrixTest extends BaseCase
 	 * Test that template tags in matrix values are escaped by PluginAbstract.
 	 * @return void
 	 * @covers ::work
+	 * @covers \CeusMedia\TemplateEngine\PluginAbstract
+	 * @covers \CeusMedia\TemplateEngine\Plugin\Matrix
 	 */
 	public function testTagEscaping(): void
 	{

@@ -41,6 +41,7 @@ class StripTest extends BaseCase
 	/**
 	 * @return void
 	 * @covers ::apply
+	 * @covers \CeusMedia\TemplateEngine\FilterAbstract
 	 */
 	public function testStripSpace(): void
 	{
@@ -53,6 +54,7 @@ class StripTest extends BaseCase
 	/**
 	 * @return void
 	 * @covers ::apply
+	 * @covers \CeusMedia\TemplateEngine\FilterAbstract
 	 */
 	public function testStripComments(): void
 	{
@@ -66,6 +68,7 @@ class StripTest extends BaseCase
 	/**
 	 * @return void
 	 * @covers ::apply
+	 * @covers \CeusMedia\TemplateEngine\FilterAbstract
 	 */
 	public function testStripStyles(): void
 	{
@@ -79,6 +82,7 @@ class StripTest extends BaseCase
 	/**
 	 * @return void
 	 * @covers ::apply
+	 * @covers \CeusMedia\TemplateEngine\FilterAbstract
 	 */
 	public function testStripScripts(): void
 	{
@@ -93,6 +97,7 @@ class StripTest extends BaseCase
 	 * Test multiple strip types at once.
 	 * @return void
 	 * @covers ::apply
+	 * @covers \CeusMedia\TemplateEngine\FilterAbstract
 	 */
 	public function testMultipleTypes(): void
 	{
@@ -106,6 +111,7 @@ class StripTest extends BaseCase
 	 * Test that unknown arguments are ignored.
 	 * @return void
 	 * @covers ::apply
+	 * @covers \CeusMedia\TemplateEngine\FilterAbstract
 	 */
 	public function testUnknownArgument(): void
 	{
@@ -119,6 +125,7 @@ class StripTest extends BaseCase
 	 * Test keywords.
 	 * @return void
 	 * @covers ::getKeywords
+	 * @covers \CeusMedia\TemplateEngine\FilterAbstract
 	 */
 	public function testKeywords(): void
 	{

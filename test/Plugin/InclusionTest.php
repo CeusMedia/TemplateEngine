@@ -42,6 +42,7 @@ class InclusionTest extends BaseCase
 	 * @return void
 	 * @covers ::work
 	 * @covers \CeusMedia\TemplateEngine\PluginAbstract
+	 * @covers \CeusMedia\TemplateEngine\Template
 	 */
 	public function testWork(): void
 	{
@@ -77,6 +78,8 @@ class InclusionTest extends BaseCase
 	 * Test that no include tags returns template unchanged.
 	 * @return void
 	 * @covers ::work
+	 * @covers \CeusMedia\TemplateEngine\PluginAbstract
+	 * @covers \CeusMedia\TemplateEngine\Template
 	 */
 	public function testNoIncludeTags(): void
 	{
@@ -92,6 +95,8 @@ class InclusionTest extends BaseCase
 	 * Test with custom keyword.
 	 * @return void
 	 * @covers ::work
+	 * @covers \CeusMedia\TemplateEngine\PluginAbstract
+	 * @covers \CeusMedia\TemplateEngine\Template
 	 */
 	public function testCustomKeyword(): void
 	{
