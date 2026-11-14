@@ -60,10 +60,6 @@ class Code extends FilterAbstract
 		$format		= array_shift( $arguments );
 		$language	= array_shift( $arguments );												//  get language from first argument
 		switch( $format ){
-			case 'xmp':
-				$class		= $language;															//  get CSS class from chosen language
-				$content	= HtmlTag::create( 'xmp', $content, ['class' => $class] );
-				break;
 			case 'highlight':
 				$content	= highlight_string( $content, TRUE );
 				break;

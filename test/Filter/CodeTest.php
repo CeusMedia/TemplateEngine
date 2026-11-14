@@ -62,27 +62,4 @@ class CodeTest extends BaseCase
 		self::assertEquals( highlight_string( 'Code', TRUE ), $actual );
 	}
 
-	/**
-	 * @return void
-	 * @covers ::apply
-	 * @covers \CeusMedia\TemplateEngine\FilterAbstract
-	 */
-	public function testApply_XMP(): void
-	{
-		$filter	= new Code();
-		$actual	= $filter->apply( 'Code', ['xmp'] );
-		self::assertEquals( '<xmp>Code</xmp>', $actual );
-	}
-
-	/**
-	 * @return void
-	 * @covers ::apply
-	 * @covers \CeusMedia\TemplateEngine\FilterAbstract
-	 */
-	public function testApply_XMP_SQL(): void
-	{
-		$filter	= new Code();
-		$actual	= $filter->apply( 'Code', ['xmp', 'sql'] );
-		self::assertEquals( '<xmp class="sql">Code</xmp>', $actual );
-	}
 }
