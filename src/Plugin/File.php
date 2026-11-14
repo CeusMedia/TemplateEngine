@@ -129,11 +129,24 @@ class File extends PluginAbstract
 	 *	@access		protected
 	 *	@param		string		$key			Key of external file to load
 	 *	@return		string
+	 *	@throws		InvalidArgumentException		If the resolved path escapes the configured base directory
 	 */
 	protected function getFileNameFromKey( string $key ): string
 	{
-		/** @var string $path */
-		$path	= $this->options['path'];
-		return $path.$key;
+		/** @var string $basePath */
+		$basePath	= $this->options['path'];
+		$fullPath	= $basePath.$key;
+
+		// Resolve the real absolute path to prevent directory traversal
+		$realPath	= realpath( $fullPath );
+		if( $realPath === false )
+			throw new InvalidArgumentException( 'File not found: '.$key );
+
+		// Ensure the resolved path is within the configured base directory
+		$realBase	= realpath( $basePath );
+		if( $realBase === false || strpos( $realPath, $realBase.DIRECTORY_SEPARATOR ) !== 0 )
+			throw new InvalidArgumentException( 'Path traversal attempt detected: '.$key );
+
+		return $realPath;
 	}
 }
