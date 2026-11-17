@@ -157,6 +157,19 @@ class TemplateTest extends BaseCase
 
 	/**
 	 * @return void
+	 * @covers ::addElement
+	 * @covers ::getElements
+	 * @covers \CeusMedia\TemplateEngine\Template
+	 */
+	public function testAddElementWithNull(): void
+	{
+		$this->template->addElement( 'nullTag', null );
+		$size	= sizeof( $this->template->getElements() );
+		self::assertEquals( 0, $size );
+	}
+
+	/**
+	 * @return void
 	 * @covers ::addObject
 	 * @covers ::getElements
 	 * @covers \CeusMedia\TemplateEngine\Template

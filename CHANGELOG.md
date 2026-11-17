@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Bug Fixes
+- **`addElement` null type hint**: Added `null` to the union type hint for `$element` parameter (`string|int|float|array|object|null`) — the underlying `add()` method always handled null values by skipping them, but the type hint was missing, causing type errors when passing null
+
 ## [0.6.1] - 2026-11-14
 
 ### Security Fixes

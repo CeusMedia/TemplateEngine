@@ -375,13 +375,13 @@ class Template
 
 	/**
 	 *	Adds one Element.
-	 *	@param		string							$tag		Tag name
-	 *	@param		string|int|float|array|object	$element	...
-	 *	@param		boolean							$overwrite	if set to TRUE, it will overwrite an existing element with the same label
+	 *	@param		string								$tag		Tag name
+	 *	@param		string|int|float|array|object|null	$element	...
+	 *	@param		boolean								$overwrite	if set to TRUE, it will overwrite an existing element with the same label
 	 *	@return		void
 	 *	@throws		ReflectionException
 	 */
-	public function addElement( string $tag, string|int|float|array|object $element, bool $overwrite = FALSE ): void
+	public function addElement( string $tag, string|int|float|array|object|null $element, bool $overwrite = FALSE ): void
 	{
 		$this->add( [$tag => $element], $overwrite );
 	}
